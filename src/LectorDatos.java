@@ -68,6 +68,7 @@ public class LectorDatos {
             }
 
             i = 0;
+
             String[] split = linea.split(" ");
             ciudades[Integer.parseInt(split[0]) - 1][i++] = Double.parseDouble(split[1]);
             ciudades[Integer.parseInt(split[0]) - 1][i] = Double.parseDouble(split[2]);
