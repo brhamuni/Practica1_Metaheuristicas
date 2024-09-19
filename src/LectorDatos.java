@@ -2,19 +2,21 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LectorDatos {
+
     private final String ruta;
-    private final Double ciudades[][];
-    private final Double distancias[][];
+    private final ArrayList<ArrayList<Double>> Matriz_Ciudades;
+    private final ArrayList<ArrayList<Double>> Matriz_Distancias;
     
     public LectorDatos(String ruta) {
-        this.ruta = ruta;//.split("\\.")[0];
+        this.ruta = ruta;
         
-        String linea = null;
-        FileReader f = null;
+        String linea = null; FileReader f = null;
         
         try {
             f = new FileReader(ruta);
@@ -38,9 +40,12 @@ public class LectorDatos {
             }
         }
 
-        int tam = Integer.parseInt(linea.split(":")[1].replace(" ", ""));
+        int Tamanio_Fichero = Integer.parseInt(linea.split(":")[1].replace(" ", ""));
 
-        ciudades = new Double[tam][2];
+        Matriz_Ciudades = new ArrayList<>();
+        for(int i=0; i<Tamanio_Fichero ; ++i){
+            Matriz_Ciudades.add(new ArrayList<>());
+        }
             
         try {
             linea = b.readLine();
@@ -61,7 +66,7 @@ public class LectorDatos {
             linea = linea.trim();
             while(i<linea.length()){
                 if (linea.charAt(i)== ' ' && linea.charAt(i+1) == ' '){
-                    linea = linea.substring(0,i)+linea.substring(i+1,linea.length());
+                    linea = linea.substring(0,i)+linea.substring(i+1, linea.length());
                     i--;
                 }
                 i++;
@@ -70,8 +75,11 @@ public class LectorDatos {
             i = 0;
 
             String[] split = linea.split(" ");
-            ciudades[Integer.parseInt(split[0]) - 1][i++] = Double.parseDouble(split[1]);
-            ciudades[Integer.parseInt(split[0]) - 1][i] = Double.parseDouble(split[2]);
+
+            //Coordenadas X
+            Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i,*/ Double.parseDouble(split[1]));
+            //Coordenadas Y
+            Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i,*/ Double.parseDouble(split[2]));
             try {
                 linea = b.readLine();
             } catch (IOException ex) {
@@ -79,15 +87,19 @@ public class LectorDatos {
             }
         }
 
-        distancias = new Double[tam][tam];
-        
+        Matriz_Distancias = new ArrayList<>();
+        for(int i=0; i< Tamanio_Fichero; ++i){
+            Matriz_Distancias.add(new ArrayList<>(Tamanio_Fichero));
 
-        for(int i=0;i<tam;i++){
-            for(int j=i;j<tam;j++){
+        }
+
+        for(int i=0; i<Tamanio_Fichero; i++){
+            for(int j=i;j<Tamanio_Fichero; j++){
                 if(i == j){
-                    distancias[i][j] = Double.POSITIVE_INFINITY;
+                    Matriz_Distancias.get(i).add(Double.POSITIVE_INFINITY);
                 }else{
-                    distancias[i][j] = distancias[j][i] = Math.sqrt(Math.pow(ciudades[i][0] - ciudades[j][0], 2) + Math.pow(ciudades[i][1] - ciudades[j][1], 2));
+                    Matriz_Distancias.get(i).add(j, Math.sqrt( Math.pow(Matriz_Ciudades.get(i).get(0) - Matriz_Ciudades.get(j).get(0), 2) + Math.pow(Matriz_Ciudades.get(i).get(1) - Matriz_Ciudades.get(j).get(1), 2)));
+                    Matriz_Distancias.get(j).add(i, Math.sqrt( Math.pow(Matriz_Ciudades.get(i).get(0) - Matriz_Ciudades.get(j).get(0), 2) + Math.pow(Matriz_Ciudades.get(i).get(1) - Matriz_Ciudades.get(j).get(1), 2)));
                 }
             }
         }
@@ -96,8 +108,8 @@ public class LectorDatos {
 
     public String getRuta() { return ruta; }
 
-    public Double[][] getCiudades() { return ciudades; }
+    public ArrayList<ArrayList<Double>> getMatriz_Ciudades() { return Matriz_Ciudades; }
 
-    public Double[][] getDistancias() { return distancias; }
+    public ArrayList<ArrayList<Double>> getMatriz_Distancias() { return Matriz_Distancias; }
     
 }
