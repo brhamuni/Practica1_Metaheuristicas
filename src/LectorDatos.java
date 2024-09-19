@@ -62,8 +62,10 @@ public class LectorDatos {
         }
             
         while(!linea.equals("EOF")){
-            int i=0;
+            int i =0;
             linea = linea.trim();
+            linea = linea.replaceAll("\\s+", " ");
+            /*
             while(i<linea.length()){
                 if (linea.charAt(i)== ' ' && linea.charAt(i+1) == ' '){
                     linea = linea.substring(0,i)+linea.substring(i+1, linea.length());
@@ -71,15 +73,30 @@ public class LectorDatos {
                 }
                 i++;
             }
-
-            i = 0;
+            */
 
             String[] split = linea.split(" ");
+
+            /*
+            int errores=0;
+            for (int i = 0; i < split.length; i++) {
+                try{
+                    //Coordenadas X
+                    Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i, Double.parseDouble(split[1]));
+                    //Coordenadas Y
+                    Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i, Double.parseDouble(split[2]));
+                } catch (NumberFormatException e) {
+                    errores++;
+                }
+            }
+            */
+            
 
             //Coordenadas X
             Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i,*/ Double.parseDouble(split[1]));
             //Coordenadas Y
             Matriz_Ciudades.get(Integer.parseInt(split[0]) - 1).add(/*i,*/ Double.parseDouble(split[2]));
+
             try {
                 linea = b.readLine();
             } catch (IOException ex) {
@@ -90,7 +107,6 @@ public class LectorDatos {
         Matriz_Distancias = new ArrayList<>();
         for(int i=0; i< Tamanio_Fichero; ++i){
             Matriz_Distancias.add(new ArrayList<>(Tamanio_Fichero));
-
         }
 
         for(int i=0; i<Tamanio_Fichero; i++){
@@ -103,7 +119,7 @@ public class LectorDatos {
                 }
             }
         }
-        
+        System.out.println("Se acabo el constructor de: "+ ruta);
     }
 
     public String getRuta() { return ruta; }
