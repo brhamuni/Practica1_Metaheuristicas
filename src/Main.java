@@ -3,7 +3,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Main {
+public class Main implements Runnable{
 
     private static ArrayList<Integer> Solucion;
 
@@ -30,70 +30,75 @@ public class Main {
 
     }
 
-    static double GreedyAleatorio(final double[][] mat, int n, ArrayList<Integer> Solucion) {
+    static double GreedyAleatorio(final double[][] Distancias, int tam, ArrayList<Integer> Solucion) {
         // Inicializar marcadores de ciudades visitadas y la solución
-        ArrayList<Boolean> Ciudades_Marcadas = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            Ciudades_Marcadas.add(false); // Todas las ciudades no marcadas al inicio
+        ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>(tam);
+        for (int i = 0; i < tam; i++) {
+            Ciudades_Visitadas.add(false); // Todas las ciudades no marcadas al inicio
         }
 
         Solucion.clear();  // Asegurarse de que la solución está vacía al comenzar
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < tam; i++) {
             Solucion.add(0);  // Rellenar la solución con ceros (se llenará después)
         }
 
         // Cargar la ciudad inicial
-        ciudadInicial(Solucion, n, Ciudades_Marcadas);
+        ciudadInicial(Solucion, tam, Ciudades_Visitadas);
 
         // Bucle para encontrar las siguientes ciudades de manera greedy
-        for (int i = 0; i < n - 1; i++) {
+        for (int i = 0; i < tam - 1; i++) {
             double menorDist = Double.MAX_VALUE;
             int posmenor = 0;
 
             // Buscar la ciudad más cercana que no ha sido visitada
-            for (int j = 0; j < n; j++) {
-                if (!Ciudades_Marcadas.get(j) && mat[Solucion.get(i)][j] < menorDist) {
-                    menorDist = mat[Solucion.get(i)][j];
+            for (int j = 0; j < tam; j++) {
+                if (!Ciudades_Visitadas.get(j) && Distancias[Solucion.get(i)][j] < menorDist) {
+                    menorDist = Distancias[Solucion.get(i)][j];
                     posmenor = j;
                 }
             }
 
             // Actualizar la solución con la ciudad más cercana
             Solucion.set(i + 1, posmenor);
-            Ciudades_Marcadas.set(posmenor, true); // Marcar la ciudad como visitada
+            Ciudades_Visitadas.set(posmenor, true); // Marcar la ciudad como visitada
         }
 
         // Retornar el coste total de la solución obtenida
-        return Calculo_Coste(Solucion, mat, n);
+        return Calculo_Coste(Solucion, Distancias, tam);
     }
 
 
-    static double Calculo_Coste(ArrayList<Integer> sol, final double[][] dist, int tam) {
+    static double Calculo_Coste(ArrayList<Integer> Solucion, final double[][] Distancias, int tam) {
         double cost = 0.0;
 
         for (int i = 0; i < tam - 1; i++) {
-            cost += dist[sol.get(i)][sol.get(i + 1)];
+            cost += Distancias[Solucion.get(i)][Solucion.get(i + 1)];
         }
 
-        cost += dist[sol.get(0)][sol.get(tam - 1)];
+        cost += Distancias[Solucion.get(0)][Solucion.get(tam - 1)];
 
         return cost;
     }
 
-    static void ciudadInicial(ArrayList<Integer> sol, int n, ArrayList<Boolean> marcada) {
+    static void ciudadInicial(ArrayList<Integer> Solucion, int tam, ArrayList<Boolean> Ciudades_Visitadas) {
         // Seleccionar la primera ciudad como ciudad inicial (puedes cambiar esto si es necesario)
-        int ciudadInicial = new Random().nextInt(0,n); // Comenzamos por la ciudad 0 (puede ser otra ciudad según la lógica)
+        int ciudadInicial = new Random().nextInt(0,tam); // Comenzamos por la ciudad 0 (puede ser otra ciudad según la lógica)
 
         // Asignar la ciudad inicial en la solución
-        sol.set(0, ciudadInicial);
+        Solucion.set(0, ciudadInicial);
 
         // Marcar la ciudad inicial como visitada
-        marcada.set(ciudadInicial, true);
+        Ciudades_Visitadas.set(ciudadInicial, true);
     }
 
+    @Override
+    public void run() {
+        long Tiempo_Incial = System.currentTimeMillis();
+        long Tiempo_Final = System.currentTimeMillis();
 
-
-
+        long Tiempo_Ejecucion = (Tiempo_Final-Tiempo_Incial)/1000;
+        System.out.println("El costo es" + costo + "\n Duracion: " + Tiempo_Ejecucion + " segundos. ");
+    }
 }
 
 
