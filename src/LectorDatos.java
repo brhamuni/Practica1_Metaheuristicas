@@ -91,7 +91,7 @@ public class LectorDatos {
             }
         }
 
-        System.out.println("Se acabó el constructor de: " + ruta);
+        System.out.println("Se construyeron las matrices del archivo: " + ruta + " correctamente.");
     }
 
     public String getRuta() {
