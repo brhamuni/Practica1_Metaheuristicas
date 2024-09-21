@@ -1,5 +1,3 @@
-//Pareja 10
-
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -102,6 +100,7 @@ public class Main implements Runnable{
     public void run() {
 
     }
-}
 
+
+}
 
