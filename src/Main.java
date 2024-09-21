@@ -2,14 +2,19 @@
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 public class Main implements Runnable{
 
     private static ArrayList<Integer> Solucion;
+    private Random random;
+    private CountDownLatch countDownLatch;
+    private StringBuilder log;
 
     public static void main(String[] args) {
 
         Solucion = new ArrayList<>();
+        double Tiempo_Incial = System.currentTimeMillis();
 
         LectorDatos lector_ch130 = new LectorDatos("ch130.tsp");
         LectorDatos lector_pr144 = new LectorDatos("pr144.tsp");
@@ -17,20 +22,22 @@ public class Main implements Runnable{
         LectorDatos lector_u1060 = new LectorDatos("u1060.tsp");
         LectorDatos lector_d18512 = new LectorDatos("d18512.tsp");
 
-        System.out.println("Una posible solucion para el archivo ch130.tsp es: "+ GreedyAleatorio(lector_ch130.getMatriz_Distancias(),lector_ch130.getMatriz_Distancias().length,Solucion));
+        System.out.println("Una posible solucion para el archivo ch130.tsp es: "+ Greedy(lector_ch130.getMatriz_Distancias(),lector_ch130.getMatriz_Distancias().length,Solucion));
 
-        System.out.println("Una posible solucion para el archivo pr144.tsp es: "+ GreedyAleatorio(lector_pr144.getMatriz_Distancias(),lector_pr144.getMatriz_Distancias().length,Solucion));
+        System.out.println("Una posible solucion para el archivo pr144.tsp es: "+ Greedy(lector_pr144.getMatriz_Distancias(),lector_pr144.getMatriz_Distancias().length,Solucion));
 
-        System.out.println("Una posible solucion para el archivo a280.tsp es: "+ GreedyAleatorio(lector_a280.getMatriz_Distancias(),lector_a280.getMatriz_Distancias().length,Solucion));
+        System.out.println("Una posible solucion para el archivo a280.tsp es: "+ Greedy(lector_a280.getMatriz_Distancias(),lector_a280.getMatriz_Distancias().length,Solucion));
 
-        System.out.println("Una posible solucion para el archivo u1060.tsp es: "+ GreedyAleatorio(lector_u1060.getMatriz_Distancias(),lector_u1060.getMatriz_Distancias().length,Solucion));
+        System.out.println("Una posible solucion para el archivo u1060.tsp es: "+ Greedy(lector_u1060.getMatriz_Distancias(),lector_u1060.getMatriz_Distancias().length,Solucion));
 
-        System.out.println("Una posible solucion para el archivo d18512.tsp es: "+ GreedyAleatorio(lector_d18512.getMatriz_Distancias(),lector_d18512.getMatriz_Distancias().length,Solucion));
+        System.out.println("Una posible solucion para el archivo d18512.tsp es: "+ Greedy(lector_d18512.getMatriz_Distancias(),lector_d18512.getMatriz_Distancias().length,Solucion));
 
-
+        double Tiempo_Final = System.currentTimeMillis();
+        double Tiempo_Ejecucion = (Tiempo_Final-Tiempo_Incial)/1000;
+        System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. ");
     }
 
-    static double GreedyAleatorio(final double[][] Distancias, int tam, ArrayList<Integer> Solucion) {
+    static double Greedy(final double[][] Distancias, int tam, ArrayList<Integer> Solucion) {
         // Inicializar marcadores de ciudades visitadas y la solución
         ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>(tam);
         for (int i = 0; i < tam; i++) {
@@ -93,11 +100,7 @@ public class Main implements Runnable{
 
     @Override
     public void run() {
-        long Tiempo_Incial = System.currentTimeMillis();
-        long Tiempo_Final = System.currentTimeMillis();
 
-        long Tiempo_Ejecucion = (Tiempo_Final-Tiempo_Incial)/1000;
-        System.out.println("El costo es" + costo + "\n Duracion: " + Tiempo_Ejecucion + " segundos. ");
     }
 }
 
