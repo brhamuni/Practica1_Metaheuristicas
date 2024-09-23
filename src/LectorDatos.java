@@ -38,7 +38,7 @@ public class LectorDatos {
         }
 
         // Procesar las coordenadas de las ciudades hasta encontrar "EOF"
-        while ( !Linea_Archivo.equals("EOF")){
+        while ( !Linea_Archivo.equals("EOF") ){
             String[] split = Linea_Archivo.split(" ");
             int ciudadIndex = Integer.parseInt(split[0]) - 1;
             Matriz_Ciudades[ciudadIndex][0] = Double.parseDouble(split[1]); // Coordenada X
