@@ -6,10 +6,12 @@ public class Main{
 
     private static ArrayList<Integer> Solucion;
     private static double coste;
+    private static Random random;
 
     public static void main(String[] args) {
 
         Solucion = new ArrayList<>();
+        random = new Random(53919521);
         double Tiempo_Incial = System.currentTimeMillis();
 
         LectorDatos lector_ch130 = new LectorDatos("ch130.tsp");
@@ -18,111 +20,116 @@ public class Main{
         LectorDatos lector_u1060 = new LectorDatos("u1060.tsp");
         LectorDatos lector_d18512 = new LectorDatos("d18512.tsp");
 
+        //region Mostrar Soluciones
         System.out.println("Una posible solucion para el archivo ch130.tsp es: ");
         coste = GreedyAleatorio(Solucion,lector_ch130.getMatriz_Distancias().length,lector_ch130.getMatriz_Distancias(),5);
         //System.out.println("Solucion: " + Solucion.toString());
-        System.out.println("Con un coste total de: " + coste+"\n\n\n");
+        System.out.println("Con un coste total de: " + coste+"\n");
 
         System.out.println("Una posible solucion para el archivo pr144.tsp es: ");
         coste= GreedyAleatorio(Solucion,lector_pr144.getMatriz_Distancias().length,lector_pr144.getMatriz_Distancias(),5);
         //System.out.println("Solucion: " + Solucion.toString());
-        System.out.println("Con un coste total de: " + coste+"\n\n\n");
+        System.out.println("Con un coste total de: " + coste+"\n");
 
         System.out.println("Una posible solucion para el archivo a280.tsp es: ");
         coste = GreedyAleatorio(Solucion,lector_a280.getMatriz_Distancias().length,lector_a280.getMatriz_Distancias(),5);
        // System.out.println("Solucion: " + Solucion.toString());
-        System.out.println("Con un coste total de: " + coste+"\n\n\n");
+        System.out.println("Con un coste total de: " + coste+"\n");
 
         System.out.println("Una posible solucion para el archivo u1060.tsp es: ");
         coste = GreedyAleatorio(Solucion,lector_u1060.getMatriz_Distancias().length,lector_u1060.getMatriz_Distancias(),5);
         //System.out.println("Solucion: " + Solucion.toString());
-        System.out.println("Con un coste total de: " + coste+"\n\n\n");
+        System.out.println("Con un coste total de: " + coste+"\n");
 
         System.out.println("Una posible solucion para el archivo d18512.tsp es: ");
         coste = GreedyAleatorio(Solucion,lector_d18512.getMatriz_Distancias().length,lector_d18512.getMatriz_Distancias(),5);
         //System.out.println("Solucion: " + Solucion.toString());
         System.out.println("Con un coste total de: " + coste+"\n");
+    //endregion
 
         double Tiempo_Final = System.currentTimeMillis();
         double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
         System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. ");
     }
 
-    static double GreedyAleatorio(ArrayList<Integer> Solucion, int tam, final double[][] Matriz_Distancias, int k) {
-        Solucion.clear();  // Limpiar la solución previa
+    static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias, int k) {
+        Solucion.clear();
 
         ArrayList<Pair> todos = new ArrayList<>();
         ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>();
-        for (int i = 0; i < tam; i++) {
+        for (int i = 0; i < Tam; i++) {
             Ciudades_Visitadas.add(false);
         }
 
-        // Sumar todas las distancias para cada ciudad y crear pares (suma, ciudad)
-        for (int i = 0; i < tam; i++) {
+        for (int i = 0; i < Tam; i++) {
             double Suma_Total = 0.0;
-            for (int j = 0; j < tam; j++) {
+            for (int j = 0; j < Tam; j++) {
                 if (i != j) {
                     Suma_Total += Matriz_Distancias[i][j];
                 }
             }
-            todos.add(new Pair(Suma_Total, i));  // i representa la ciudad, en formato 0-indexado
+            todos.add(new Pair(i, Suma_Total));
         }
+        //Ordenamos todos
         Collections.sort(todos);
-        // Inicializar la solución
-        Random random = new Random();
 
         // Comenzar a construir la solución aleatoriamente desde las primeras K ciudades
-        for (int i = 0; i < tam; i++) {
-            // Selección aleatoria de una ciudad dentro del rango de K
+        for (int i = 0; i < Tam; i++) {
             int limite = Math.min(k, todos.size());
-            int pos = random.nextInt(limite);  // Seleccionar aleatoriamente entre las primeras `K` ciudades
+            int pos = random.nextInt(limite);
 
-            Pair pairSeleccionada = todos.get(pos);
-            Solucion.add(pairSeleccionada.ciudad + 1);  // Agregar la ciudad a la solución (sumar 1 para numeración correcta)
+            Pair seleccionado = todos.get(pos);
+            Solucion.add(seleccionado.ciudad + 1);
+            Ciudades_Visitadas.set(seleccionado.ciudad, true);
 
-            // Marcar la ciudad como visitada
-            Ciudades_Visitadas.set(pairSeleccionada.ciudad, true);
-
-            // Eliminar la ciudad seleccionada de la lista "todos"
-            todos.remove(pos);  // Eliminar por posición
+            todos.remove(pos);
         }
-        // Retornar el coste de la solución  generada
-        return Calculo_Coste(Solucion, Matriz_Distancias, tam);
+
+        return Calculo_Coste(Solucion, Matriz_Distancias, Tam);
     }
 
-    // Método para calcular el coste de la solución
+    /**
+     * Método para calcular el coste del camino
+     * @param Solucion
+     * @param Matriz_Distancias
+     * @param tam
+     * @return coste el camino
+     */
     static double Calculo_Coste(ArrayList<Integer> Solucion, final double[][] Matriz_Distancias, int tam) {
-        double coste = 0.0;
+        double Coste_Total = 0.0;
 
         for (int i = 0; i < tam - 1; i++) {
-            coste += Matriz_Distancias[Solucion.get(i) - 1][Solucion.get(i + 1) -1];  // Restamos 1 para acceder al índice correcto
+            Coste_Total += Matriz_Distancias[Solucion.get(i) - 1][Solucion.get(i + 1) -1];
         }
 
-        // Sumar la distancia entre la última ciudad y la primera para completar el ciclo
-        coste += Matriz_Distancias[Solucion.get(0) - 1][Solucion.get(tam - 1) - 1];  // Restamos 1 para ajustar el índice
+        //Sumamos el coste de ir de la ultima a la primera ciudad para cerrar el ciclo
+        Coste_Total += Matriz_Distancias[Solucion.get(0) - 1][Solucion.get(tam - 1) - 1];
 
-        return coste;
+        return Coste_Total;
     }
 
-    // Método para seleccionar la ciudad inicial
-    static int ciudadInicial(ArrayList<Integer> Solucion, int tam, ArrayList<Boolean> Ciudades_Visitadas) {
-        Random random = new Random();
-        int ciudadInicial = random.nextInt(tam); // Selección de ciudad inicial aleatoria (índice)
-
-        // Asignar la ciudad inicial en la solución (sumar 1 para ajustar la numeración)
+    /**
+     * Método para seleccionar la ciudad inicial
+     * @param Solucion
+     * @param Tam
+     * @param Ciudades_Visitadas
+     * @return ciudad por la que empieza el algoritmo
+     */
+    static int ciudadInicial(ArrayList<Integer> Solucion, int Tam, ArrayList<Boolean> Ciudades_Visitadas) {
+        int ciudadInicial = random.nextInt(Tam);
         Solucion.add(ciudadInicial + 1);
-
-        // Marcar la ciudad inicial como visitada
         Ciudades_Visitadas.set(ciudadInicial, true);
-
         return ciudadInicial;
     }
 
+    /**
+     * Clase Pair con la que guardaremos la suma del camino hasta ella y la propia ciudad
+     */
     static class Pair implements Comparable<Pair> {
-        private Double suma;
         private Integer ciudad;
+        private Double suma;
 
-        Pair(Double suma, Integer ciudad) {
+        Pair(Integer ciudad, Double suma) {
             this.suma = suma;
             this.ciudad = ciudad;
         }
