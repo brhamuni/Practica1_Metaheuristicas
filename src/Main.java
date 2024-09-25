@@ -23,7 +23,7 @@ public class Main{
 
 
                 coste = GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
-                System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+j+", semilla: "+lectorParametros.getSemillas()[j]);
+                System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+ (j+1) +", semilla: "+lectorParametros.getSemillas()[j]);
                 System.out.println("Con un coste total de: " + coste);
                 double Tiempo_Final = System.currentTimeMillis();
                 double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
