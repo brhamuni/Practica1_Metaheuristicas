@@ -7,33 +7,39 @@ public class Main{
     private static ArrayList<Integer> Solucion;
     private static double coste;
     private static Random random;
+    private static LectorParametros lectorParametros;
 
     public static void main(String[] args) {
 
         Solucion = new ArrayList<>();
-        random = new Random(53919521);
-        double Tiempo_Incial = System.currentTimeMillis();
+        lectorParametros = new LectorParametros("parametros.txt");
 
-        //LectorDatos lector_ch130 = new LectorDatos("ch130.tsp");
-        //LectorDatos lector_pr144 = new LectorDatos("pr144.tsp");
-        //LectorDatos lector_a280 = new LectorDatos("a280.tsp");
-        LectorDatos lector_u1060 = new LectorDatos("u1060.tsp");
-        //LectorDatos lector_d18512 = new LectorDatos("d18512.tsp");
+        for (int i = 0; i < lectorParametros.getnFicheros(); i++) {
+            LectorDatos lector = new LectorDatos(lectorParametros.getRutas()[i]);
 
-        //region Mostrar Soluciones
-        System.out.println("Una posible solucion para el archivo a280.tsp es: ");
-        coste = GreedyAleatorio(Solucion,lector_u1060.getMatriz_Distancias().length,lector_u1060.getMatriz_Distancias(),5);
-       // System.out.println("Solucion: " + Solucion.toString());
-        System.out.println("Con un coste total de: " + coste+"\n");
+            for (int j = 0; j < lectorParametros.getnSemillas(); j++) {
+                random = new Random(lectorParametros.getSemillas()[j]);
+                double Tiempo_Incial = System.currentTimeMillis();
 
-    //endregion
 
-        double Tiempo_Final = System.currentTimeMillis();
-        double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
-        System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. ");
+                coste = GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
+                System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+j+", semilla: "+lectorParametros.getSemillas()[j]);
+                System.out.println("Con un coste total de: " + coste);
+                double Tiempo_Final = System.currentTimeMillis();
+                double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
+                System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. "+"\n");
+            }
+        }
     }
 
-    static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias, int k) {
+    /**
+     * Greedy Aleatorio
+     * @param Solucion Vector con el camino que hace el viajante
+     * @param Tam Numero de ciudades
+     * @param Matriz_Distancias Matriz donde se guardan las distancias entre ciudades
+     * @return
+     */
+    static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias) {
         Solucion.clear();
 
         ArrayList<Pair> Posibles_Ciudades = new ArrayList<>();
@@ -57,7 +63,7 @@ public class Main{
         // Comenzar a construir la solución aleatoriamente desde las primeras K ciudades
         for (int i = 0; i < Tam; i++) {
             //Hacemos el minimo por si hay menos que k y entrar a una posicion correcta
-            int K_Correcta = Math.min(k, Posibles_Ciudades.size());
+            int K_Correcta = Math.min(lectorParametros.getNumeroK(), Posibles_Ciudades.size());
             int Pos = random.nextInt(K_Correcta);
 
             Pair Pair_Pos = Posibles_Ciudades.get(Pos);
