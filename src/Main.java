@@ -19,17 +19,16 @@ public class Main{
 
             for (int j = 0; j < lectorParametros.getnSemillas(); j++) {
                 random = new Random(lectorParametros.getSemillas()[j]);
-                double Tiempo_Incial = System.currentTimeMillis();
+                double Tiempo_Incial = System.nanoTime();
 
 
                 coste = GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
                 System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+ (j+1) +", semilla: "+lectorParametros.getSemillas()[j]);
                 System.out.println("Con un coste total de: " + coste);
-                double Tiempo_Final = System.currentTimeMillis();
-                double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
+                double Tiempo_Final = System.nanoTime();
+                double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000000000;
                 System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. "+"\n");
             }
-            Solucion.clear();
         }
     }
 
@@ -41,6 +40,7 @@ public class Main{
      * @return
      */
     static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias) {
+        Solucion.clear();
 
         ArrayList<Pair> Posibles_Ciudades = new ArrayList<>();
         ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>();
