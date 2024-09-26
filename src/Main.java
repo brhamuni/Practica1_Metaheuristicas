@@ -29,6 +29,7 @@ public class Main{
                 double Tiempo_Ejecucion = (Tiempo_Final - Tiempo_Incial) / 1000;
                 System.out.println("Duracion del tiempo de ejecucion: " + Tiempo_Ejecucion + " segundos. "+"\n");
             }
+            Solucion.clear();
         }
     }
 
@@ -40,7 +41,6 @@ public class Main{
      * @return
      */
     static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias) {
-        Solucion.clear();
 
         ArrayList<Pair> Posibles_Ciudades = new ArrayList<>();
         ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>();
@@ -57,7 +57,7 @@ public class Main{
             }
             Posibles_Ciudades.add(new Pair(i, Suma_Total));
         }
-        //Ordenamos todos
+        //Ordenamos todos los pairs
         Collections.sort(Posibles_Ciudades);
 
         // Comenzar a construir la solución aleatoriamente desde las primeras K ciudades
@@ -105,10 +105,10 @@ public class Main{
      * @return ciudad por la que empieza el algoritmo
      */
     static int ciudadInicial(ArrayList<Integer> Solucion, int Tam, ArrayList<Boolean> Ciudades_Visitadas) {
-        int ciudadInicial = random.nextInt(Tam);
-        Solucion.add(ciudadInicial + 1);
-        Ciudades_Visitadas.set(ciudadInicial, true);
-        return ciudadInicial;
+        int Ciudad_Inicial = random.nextInt(Tam);
+        Solucion.add(Ciudad_Inicial + 1);
+        Ciudades_Visitadas.set(Ciudad_Inicial, true);
+        return Ciudad_Inicial;
     }
 
     /**
