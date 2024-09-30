@@ -87,7 +87,7 @@ public class Algoritmos {
             // Calcular el entorno y modificarlo mediante el descenso
             if (Iteraccion % Reducir == 0) {
                 Tam_Vecindario = (int) (Tam_Vecindario * (1 - Reduccion));
-                System.out.println(" Cambio del tamaño de vecindario");
+                //System.out.println(" Cambio del tamaño de vecindario");
             }
         }
 
