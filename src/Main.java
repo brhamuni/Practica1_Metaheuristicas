@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 
 public class Main{
@@ -10,7 +11,7 @@ public class Main{
     static Random random;
     static LectorParametros lectorParametros;
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
 
         Solucion = new ArrayList<>();
         lectorParametros = new LectorParametros("parametros.txt");
@@ -22,8 +23,9 @@ public class Main{
                 random = new Random(lectorParametros.getSemillas()[j]);
                 double Tiempo_Incial = System.nanoTime();
 
-
-                coste = Algoritmos.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
+                Algoritmos.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
+                Algoritmos.Busqueda_Local(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getAplica(), lectorParametros.getEntorno(), lectorParametros.getDescenso());
+                coste = Algoritmos.Calculo_Coste(Solucion, lector.getMatriz_Distancias(), lector.getMatriz_Distancias().length);
                 System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+ (j+1) +", semilla: "+lectorParametros.getSemillas()[j]);
                 System.out.println("Con un coste total de: " + coste);
                 double Tiempo_Final = System.nanoTime();

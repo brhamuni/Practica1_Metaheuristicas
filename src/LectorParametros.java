@@ -13,6 +13,23 @@ public class LectorParametros {
     private Integer[] semillas;
     private Integer Iteraciones;
     private Float Aplica;
+
+    public Integer getIteraciones() {
+        return Iteraciones;
+    }
+
+    public Float getEntorno() {
+        return Entorno;
+    }
+
+    public Float getAplica() {
+        return Aplica;
+    }
+
+    public Float getDescenso() {
+        return Descenso;
+    }
+
     private Float Entorno;
     private Float Descenso;
 
