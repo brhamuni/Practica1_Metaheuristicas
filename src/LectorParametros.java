@@ -11,6 +11,10 @@ public class LectorParametros {
     private Integer nSemillas;
     private String[] rutas;
     private Integer[] semillas;
+    private Integer Iteraciones;
+    private Float Aplica;
+    private Float Entorno;
+    private Float Descenso;
 
     public String getRuta() {
         return ruta;
@@ -80,9 +84,23 @@ public class LectorParametros {
 
         this.numeroK = Integer.parseInt(split[1]);
 
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Iteraciones = Integer.parseInt(split[1]);
+
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Aplica = Float.parseFloat(split[1]);
+
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Entorno = Float.parseFloat(split[1]);
+
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Descenso = Float.parseFloat(split[1]);
+
     }
-
-
 
     /**
      * Método para avanzar una línea dentro del archivo que se esta leyendo.

@@ -3,3 +3,8 @@ a280.tsp ch130.tsp d18512.tsp pr144.tsp u1060.tsp
 nSemillas: 5
 53919521 15391952 21539195 52153919 95215391
 numeroK: 5
+iteraciones: 5000
+aplica: 0.1
+entorno: 0.08
+descenso: 0.1
+
