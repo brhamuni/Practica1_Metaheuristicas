@@ -12,7 +12,10 @@ public class LectorParametros {
     private String[] rutas;
     private Integer[] semillas;
     private Integer Iteraciones;
-    private Float Aplica;
+    private Float Porcentaje_Interacciones;
+    private Float Entorno;
+    private Float Reduccion;
+
 
     public Integer getIteraciones() {
         return Iteraciones;
@@ -22,16 +25,13 @@ public class LectorParametros {
         return Entorno;
     }
 
-    public Float getAplica() {
-        return Aplica;
+    public Float getPorcentaje_Interacciones() {
+        return Porcentaje_Interacciones;
     }
 
-    public Float getDescenso() {
-        return Descenso;
+    public Float getReduccion() {
+        return Reduccion;
     }
-
-    private Float Entorno;
-    private Float Descenso;
 
     public String getRuta() {
         return ruta;
@@ -107,7 +107,7 @@ public class LectorParametros {
 
         Linea_Archivo = Avanzar_Linea(Archivo);
         split = Linea_Archivo.split(" ");
-        this.Aplica = Float.parseFloat(split[1]);
+        this.Porcentaje_Interacciones = Float.parseFloat(split[1]);
 
         Linea_Archivo = Avanzar_Linea(Archivo);
         split = Linea_Archivo.split(" ");
@@ -115,7 +115,7 @@ public class LectorParametros {
 
         Linea_Archivo = Avanzar_Linea(Archivo);
         split = Linea_Archivo.split(" ");
-        this.Descenso = Float.parseFloat(split[1]);
+        this.Reduccion = Float.parseFloat(split[1]);
 
     }
 

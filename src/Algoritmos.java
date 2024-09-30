@@ -42,28 +42,28 @@ public class Algoritmos {
         return Calculo_Coste(Solucion, Matriz_Distancias, Tam);
     }
 
-    public static void Busqueda_Local( ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Aplica, float Entorno, float Descenso ) {
-
+    public static void Busqueda_Local( ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion ) {
+        Solucion.clear();
+        GreedyAleatorio(Solucion,Tam,Matriz_Distancias);
         ArrayList<Integer> Mejor_Vecino = new ArrayList<>(Solucion);
-        GreedyAleatorio(Mejor_Vecino,Tam,Matriz_Distancias);
         ArrayList<Integer> Array_Aux = new ArrayList<>(Solucion);
         double Mejor_Coste = Calculo_Coste(Solucion, Matriz_Distancias, Tam);
         double Coste_Mejor;
-        int i = 0;
+        int Iteraccion = 0;
         boolean Mejora = true;
-        int Cambio = (int) (Iteraciones * Aplica);
+        int Reducir = (int) (Iteraciones * Porcentaje_Interacciones);
         int Tam_Vecindario = (int) (Iteraciones * Entorno);
         // Comienzan las vueltas del bucle principal (no iteraciones)
-        while (i < Iteraciones && Mejora) {
+        while (Iteraccion < Iteraciones && Mejora) {
             Coste_Mejor = Double.MAX_VALUE;
             Mejora = false;
 
             // Evaluar todo el vecindario
             for (int j = 0; j < Tam_Vecindario; j++) {
-                int Pos1 = Main.random.nextInt(Tam-1);
+                int Pos1 = Main.random.nextInt(Tam);
                 int Pos2;
                 do {
-                    Pos2 = Main.random.nextInt(Tam-1);
+                    Pos2 = Main.random.nextInt(Tam);
                 } while (Pos1 == Pos2);
 
                 // Posible coste en caso de hacer el movimiento
@@ -77,7 +77,7 @@ public class Algoritmos {
 
             // Comprobamos si hay un vecino mejor a la solución actual
             if (Coste_Mejor < Mejor_Coste) {
-                i++;
+                Iteraccion++;
                 Solucion.clear();
                 Solucion.addAll(Mejor_Vecino);
                 Mejor_Coste = Coste_Mejor;
@@ -85,79 +85,82 @@ public class Algoritmos {
             }
 
             // Calcular el entorno y modificarlo mediante el descenso
-            if (i % Cambio == 0) {
-                Tam_Vecindario = (int) (Tam_Vecindario * (1 - Descenso));
-                System.out.println(" Cambio vecindario");
+            if (Iteraccion % Reducir == 0) {
+                Tam_Vecindario = (int) (Tam_Vecindario * (1 - Reduccion));
+                System.out.println(" Cambio del tamaño de vecindario");
             }
         }
 
-        System.out.println("**Iteraciones: " + i + " TamVecindario: " + Tam_Vecindario);
+        System.out.println("Iteraciones: " + Iteraccion + " Tam_Vecindario: " + Tam_Vecindario);
     }
 
-    static double Factorizacion(ArrayList<Integer> Nuevo, Double Mejor_Coste, final double[][] Matriz_Distancias, int Tam, int Pos1, int Pos2) {
-        double Coste_Antes = 0.0;
-        double Coste_Despues = 0.0;
+    static double Factorizacion(ArrayList<Integer> Array_Aux, Double Mejor_Coste, final double[][] Matriz_Distancias, int Tam, int Pos1, int Pos2) {
+        // Variables para almacenar los costes antes y después del intercambio
+        double costeAntes = 0.0;
+        double costeDespues = 0.0;
 
-        if (Pos1 > Pos2){
-            int aux = Pos1;
-            Pos1 = Pos2;
-            Pos2 = aux;
-        }
+        // Obtener las ciudades involucradas en el intercambio
+        int ciudadA = Array_Aux.get(Pos1)-1;
+        int ciudadB = Array_Aux.get(Pos2)-1;
 
-        //Unimos por atras
-        if (Pos1 > 0){
-            Coste_Antes += Matriz_Distancias[Pos1][Pos1-1];
-        }else{
-            Coste_Antes += Matriz_Distancias[Pos1][Tam-1];
-        }
-
-        //Unimos Por delante
-        if ( Pos1 < Tam-1 ){
-            Coste_Antes += Matriz_Distancias[Pos1][Pos1+1];
-        }else{
-            Coste_Antes += Matriz_Distancias[Pos1][0];
-        }
-
-        //Unimos por atras
-        if (Pos2 > 0){
-            Coste_Antes += Matriz_Distancias[Pos2][Pos2-1];
-        }else{
-            Coste_Antes += Matriz_Distancias[Pos2][Tam-1];
-        }
-
-        //Unimos Por delante
-        if ( Pos2 < Tam-1 ){
-            Coste_Antes += Matriz_Distancias[Pos2][Pos2+1];
-        }else{
-            Coste_Antes += Matriz_Distancias[Pos2][0];
-        }
-
+        // 1. Calcular el coste de los enlaces antes del intercambio
+        // Calcular el enlace que precede a ciudadA
         if (Pos1 == 0) {
-            Coste_Despues += Matriz_Distancias[Tam-1][Pos2];
+            costeAntes += Matriz_Distancias[Array_Aux.getLast()-1][ciudadA]; // Ciudad en el extremo izquierdo, conecta con la última
         } else {
-            Coste_Despues += Matriz_Distancias[Pos1 - 1][Pos2];
+            costeAntes += Matriz_Distancias[Array_Aux.get(Pos1 - 1)-1][ciudadA];
+        }
+
+        // Calcular el enlace que sigue a ciudadA (si no es Pos2)
+        if (Pos1 + 1 != Pos2) {
+            costeAntes += Matriz_Distancias[ciudadA][(Pos1 == Tam - 1) ? Array_Aux.getFirst()-1 : Array_Aux.get(Pos1 + 1)-1];
+        }
+
+        // Calcular el enlace que sigue a ciudadB (si Pos2 no es el último)
+        if (Pos2 == Tam - 1) {
+            costeAntes += Matriz_Distancias[ciudadB][Array_Aux.getFirst()-1]; // Ciudad en el extremo derecho, conecta con la primera
+        } else {
+            costeAntes += Matriz_Distancias[ciudadB][Array_Aux.get(Pos2 + 1)-1];
+        }
+
+        // Calcular el enlace que precede a ciudadB (si no es Pos1)
+        if (Pos2 - 1 != Pos1) {
+            costeAntes += Matriz_Distancias[Array_Aux.get((Pos2 - 1 + Tam) % Tam)-1][ciudadB];
+        }
+
+        // 2. Calcular el coste de los enlaces después del intercambio
+        // Ahora, ciudadA y ciudadB están intercambiadas, calcular el nuevo coste
+
+        // Calcular el enlace que precede a ciudadB (ahora en Pos1)
+        if (Pos1 == 0) {
+            costeDespues += Matriz_Distancias[Array_Aux.getLast()-1][ciudadB];
+        } else {
+            costeDespues += Matriz_Distancias[Array_Aux.get(Pos1 - 1)-1][ciudadB];
         }
 
         // Calcular el enlace que sigue a ciudadB (si no es Pos2)
         if (Pos1 + 1 != Pos2) {
-            Coste_Despues += Matriz_Distancias[Pos2][(Pos1 == Tam - 1) ? 0 : Pos1 + 1];
+            costeDespues += Matriz_Distancias[ciudadB][(Pos1 == Tam - 1) ? Array_Aux.getFirst()-1 : Array_Aux.get(Pos1 + 1)-1];
         }
 
         // Calcular el enlace que sigue a ciudadA (ahora en Pos2)
         if (Pos2 == Tam - 1) {
-            Coste_Despues += Matriz_Distancias[Pos1][0];
+            costeDespues += Matriz_Distancias[ciudadA][Array_Aux.getFirst()-1];
         } else {
-            Coste_Despues += Matriz_Distancias[Pos1][Pos2 + 1];
+            costeDespues += Matriz_Distancias[ciudadA][Array_Aux.get(Pos2 + 1)-1];
         }
 
         // Calcular el enlace que precede a ciudadA (si no es Pos1)
         if (Pos2 - 1 != Pos1) {
-            Coste_Despues += Matriz_Distancias[(Pos2 - 1 + Tam) % Tam][Pos1];
+            costeDespues += Matriz_Distancias[Array_Aux.get((Pos2 - 1 + Tam) % Tam)-1][ciudadA];
         }
 
-        return ((Mejor_Coste - Coste_Antes) + Coste_Despues);
+        // 3. Calcular el nuevo coste total después del intercambio
+        double nuevoCoste = Mejor_Coste - costeAntes + costeDespues;
 
+        return nuevoCoste;
     }
+
 
     /**
      * Método que calcula el coste total de una solución apartir de una matriz de distancias.
