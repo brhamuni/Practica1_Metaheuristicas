@@ -58,7 +58,7 @@ public class Algoritmos {
             Coste_Mejor_Vecino = Double.MAX_VALUE;
             Mejora = false;
 
-            // Evaluar todo el vecindario
+            // Evaluamos el vecindario
             for (int j = 0; j < Tam_Vecindario; j++) {
                 int Pos1 = Main.random.nextInt(Tam);
                 int Pos2;
@@ -66,18 +66,17 @@ public class Algoritmos {
                     Pos2 = Main.random.nextInt(Tam);
                 } while (Pos1 == Pos2);
 
-                // Posible coste en caso de hacer el movimiento
                 Array_Aux = new ArrayList<>(Mejor_Solucion);
+                double Coste_Permutado = Factorizacion(Array_Aux, Mejor_Coste, Matriz_Distancias, Tam, Pos1, Pos2);
 
-                double Coste = Factorizacion(Array_Aux, Mejor_Coste, Matriz_Distancias, Tam, Pos1, Pos2);
-                if (Coste < Coste_Mejor_Vecino) {
-                    Coste_Mejor_Vecino = Coste;
+                if (Coste_Permutado < Coste_Mejor_Vecino) {
+                    Coste_Mejor_Vecino = Coste_Permutado;
                     swap(Array_Aux, Pos1, Pos2);
                     Mejor_Vecino = new ArrayList<>(Array_Aux);
                 }
             }
 
-            // Comprobamos si hay un vecino mejor a la solución actual
+            // Comprobamos si hay un vecino mejor a la solución
             if (Coste_Mejor_Vecino < Mejor_Coste) {
                 Iteraccion++;
                 Mejor_Solucion.clear();
@@ -85,7 +84,7 @@ public class Algoritmos {
                 Mejor_Coste = Coste_Mejor_Vecino;
                 Mejora = true;
 
-                // Calcular el entorno y modificarlo mediante el descenso
+                // Calcular el entorno
                 if (Iteraccion % Reducir == 0) {
                     Tam_Vecindario = (int) (Tam_Vecindario * (1 - Reduccion));
                     //System.out.println("Iteraciones = "+Iteraccion+": Cambio de vecindario");
@@ -94,79 +93,90 @@ public class Algoritmos {
 
         }
 
-        System.out.println("Iteraciones: " + Iteraccion + " Tam_Vecindario: " + Tam_Vecindario);
+        System.out.println("Total de iteraciones: " + Iteraccion + " con un tamaño de vecindario final: " + Tam_Vecindario);
     }
 
+    /**
+     * Método que calcula el coste despues de aplicar 2-opt
+     * @param Array_Aux Lista auxiliar de enteros utilizada para almacenar elementos relacionados con la factorización.
+     * @param Mejor_Coste Número que representa el mejor coste actual obtenido en la operación.
+     * @param Matriz_Distancias Matriz de distancias donde cada valor (i,j) es la distancia entre dos elementos.
+     * @param Tam Tamaño de la lista auxiliar y de la matriz de distancias.
+     * @param Pos1 Primera posición del array a ser modificada en el proceso de factorización.
+     * @param Pos2 Segunda posición del array a ser modificada en el proceso de factorización.
+     * @return El valor del mejor coste calculado después de realizar la factorización.
+     */
     static double Factorizacion(ArrayList<Integer> Array_Aux, Double Mejor_Coste, final double[][] Matriz_Distancias, int Tam, int Pos1, int Pos2) {
         // Variables para almacenar los costes antes y después del intercambio
         double Coste_Anterior = 0.0;
         double Coste_Despues = 0.0;
 
-        // Obtener las ciudades involucradas en el intercambio
         int Ciudad_Pos1 = Array_Aux.get(Pos1)-1;
         int Ciudad_Pos2 = Array_Aux.get(Pos2)-1;
 
-        // 1. Calcular el coste de los enlaces antes del intercambio
-        // Calcular el enlace que precede a Ciudad_Pos1
-        if (Pos1 == 0) {
-            Coste_Anterior += Matriz_Distancias[Array_Aux.getLast()-1][Ciudad_Pos1]; // Ciudad en el extremo izquierdo, conecta con la última
+        // 1. Calcular el coste de los enlaces antes de la permutacion
+
+        // Calcular el enlace antes de Ciudad_Pos1
+        if (Pos1 == 0) { //En el caso que sea la primera, unimos con el final
+            Coste_Anterior += Matriz_Distancias[Array_Aux.getLast()-1][Ciudad_Pos1];
         } else {
             Coste_Anterior += Matriz_Distancias[Array_Aux.get(Pos1 - 1)-1][Ciudad_Pos1];
         }
 
-        // Calcular el enlace que sigue a Ciudad_Pos1 (si no es Pos2)
+        // Calcular el enlace que sigue a Ciudad_Pos1 sino es Pos2
         if (Pos1 + 1 != Pos2) {
-            if (Pos1 == Tam - 1) {
+            if (Pos1 == Tam - 1) { //Si es la ultima unimos con la primera
                 Coste_Anterior += Matriz_Distancias[Ciudad_Pos1][Array_Aux.getFirst() - 1];
-            } else {
+            } else { //Sino es la ultima, conectamos por el medio
                 Coste_Anterior += Matriz_Distancias[Ciudad_Pos1][Array_Aux.get(Pos1 + 1) - 1];
             }
         }
 
-        // Calcular el enlace que sigue a Ciudad_Pos2 (si Pos2 no es el último)
-        if (Pos2 == Tam - 1) {
+        // Calcular el enlace que sigue a Ciudad_Pos2
+        if (Pos2 == Tam - 1) { //Si es el ultimo conectamos con el primero
             Coste_Anterior += Matriz_Distancias[Ciudad_Pos2][Array_Aux.getFirst()-1]; // Ciudad en el extremo derecho, conecta con la primera
-        } else {
+        } else { //Sino conectamos con el medio
             Coste_Anterior += Matriz_Distancias[Ciudad_Pos2][Array_Aux.get(Pos2 + 1)-1];
         }
 
-        // Calcular el enlace que precede a Ciudad_Pos2 (si no es Pos1)
-        if (Pos2 - 1 != Pos1) {
+        // Calcular el enlace antes de Ciudad_Pos2 si no es Pos1
+        if (Pos2 - 1 != Pos1) { //Sino es Pos1, si lo es ya estaria conectado y no hacemos nada
+            //calculamos con mod por si es el ultimo
             Coste_Anterior += Matriz_Distancias[Array_Aux.get((Pos2 - 1 + Tam) % Tam)-1][Ciudad_Pos2];
         }
 
-        // 2. Calcular el coste de los enlaces después del intercambio
-        // Ahora, Ciudad_Pos1 y Ciudad_Pos2 están intercambiadas, calcular el nuevo coste
+        // Calculamos el coste de los enlaces después de la permutacion
 
-        // Calcular el enlace que precede a Ciudad_Pos2 (ahora en Pos1)
-        if (Pos1 == 0) {
+        // Calcular el enlace antes de Ciudad_Pos2 que ahora seria Pos1
+        if (Pos1 == 0) { //Si es el primero unimos con el ultimo
             Coste_Despues += Matriz_Distancias[Array_Aux.getLast()-1][Ciudad_Pos2];
-        } else {
+        } else { //Sino unimos con el anterior
             Coste_Despues += Matriz_Distancias[Array_Aux.get(Pos1 - 1)-1][Ciudad_Pos2];
         }
 
-        // Calcular el enlace que sigue a Ciudad_Pos2 (si no es Pos2)
+        // Calcular el enlace que sigue a Ciudad_Pos2 si no es Pos2
         if (Pos1 + 1 != Pos2) {
-            if (Pos1 == Tam - 1) {
+            if (Pos1 == Tam - 1) {  //Si es la ultima unimos por el principio
                 Coste_Despues += Matriz_Distancias[Ciudad_Pos2][Array_Aux.getFirst() - 1];
-            } else {
+            } else { //Sino unimos por el medio
                 Coste_Despues += Matriz_Distancias[Ciudad_Pos2][Array_Aux.get(Pos1 + 1) - 1];
             }
         }
 
-        // Calcular el enlace que sigue a Ciudad_Pos1 (ahora en Pos2)
-        if (Pos2 == Tam - 1) {
+        // Calcular el enlace que sigue a Ciudad_Pos1 ahora seria Pos2
+        if (Pos2 == Tam - 1) { //Si es el ultimo conectamos con el primero
             Coste_Despues += Matriz_Distancias[Ciudad_Pos1][Array_Aux.getFirst()-1];
-        } else {
+        } else { //Sino es el ultimo unimos por el medio
             Coste_Despues += Matriz_Distancias[Ciudad_Pos1][Array_Aux.get(Pos2 + 1)-1];
         }
 
-        // Calcular el enlace que precede a Ciudad_Pos1 (si no es Pos1)
-        if (Pos2 - 1 != Pos1) {
+        // Calcular el enlace que precede a Ciudad_Pos1 si no es Pos1
+        if (Pos2 - 1 != Pos1) { //Sino es la anterior, si lo fuera ya estaria conectado
+            // calculamos con mod por si es el ultimo
             Coste_Despues += Matriz_Distancias[Array_Aux.get((Pos2 - 1 + Tam) % Tam)-1][Ciudad_Pos1];
         }
 
-        // 3. Calcular el nuevo coste total después del intercambio
+        // Calculamos el nuevo coste despues de la permutacion
         double Nuevo_Coste = Mejor_Coste-Coste_Anterior+Coste_Despues;
         return Nuevo_Coste;
     }
