@@ -34,8 +34,8 @@ public class Algoritmos {
             int Pos = Main.random.nextInt(K_Correcta);
 
             Pair Pair_Pos = Posibles_Ciudades.get(Pos);
-            Solucion.add(Pair_Pos.ciudad + 1);
-            Ciudades_Visitadas.set(Pair_Pos.ciudad, true);
+            Solucion.add(Pair_Pos.getCiudad()+ 1);
+            Ciudades_Visitadas.set(Pair_Pos.getCiudad(), true);
 
             Posibles_Ciudades.remove(Pos);
         }
@@ -203,19 +203,5 @@ public class Algoritmos {
     /**
      * Clase Pair con la que guardaremos la suma del camino hasta ella y la propia ciudad
      */
-    static class Pair implements Comparable<Pair> {
-        private final Integer ciudad;
-        private final Double suma;
 
-        Pair( Integer ciudad, Double suma ){
-            this.suma = suma;
-            this.ciudad = ciudad;
-        }
-
-        @Override
-        public int compareTo( Pair p ){
-            if( this.suma - p.suma <= 0){ return -1; }
-            return 1;
-        }
-    }
 }
