@@ -22,7 +22,8 @@ public class Main{
                 double Tiempo_Incial = System.nanoTime();
 
                 Algoritmos.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
-                Algoritmos.Busqueda_Local(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion());
+                Algoritmos.Busqueda_Tabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion());
+
                 coste = Algoritmos.Calculo_Coste(Solucion, lector.getMatriz_Distancias(), lector.getMatriz_Distancias().length);
                 System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: "+ (j+1) +", semilla: "+lectorParametros.getSemillas()[j]);
                 System.out.println("Con un coste total de: " + coste);

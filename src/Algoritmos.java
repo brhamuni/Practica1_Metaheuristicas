@@ -183,47 +183,44 @@ public class Algoritmos {
 
     /**
      * Método que calcula el coste total de una solución apartir de una matriz de distancias.
-     * @param Solucion Una lista de enteros     que representa una posible solución, donde cada entero corresponde a una ciudad y el orden indica la secuencia de la ruta.
+     * @param Mejor_Solucion Una lista de enteros     que representa una posible solución, donde cada entero corresponde a una ciudad y el orden indica la secuencia de la ruta.
      * @param Matriz_Distancias Una matriz que representa la distancia entre la ciudad i y la ciudad j.
      * @param Tam Número entero que representa el tamaño de la solución.
      * @return El coste total de recorrer la solución proporcionada, según las distancias en la matriz.
      */
 
-    public static void BTabu(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion ) {
+    public static void Busqueda_Tabu(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion ) {
 
         Mejor_Solucion.clear();
         GreedyAleatorio(Mejor_Solucion,Tam,Matriz_Distancias);
         ArrayList<Integer> Array_Aux;
         ArrayList<Integer> Mejor_Vecino = new ArrayList<>(Mejor_Solucion);
+        ArrayList<Integer> Mejor_Global = new ArrayList<>(Mejor_Solucion);
         double Mejor_Coste = Calculo_Coste(Mejor_Solucion, Matriz_Distancias, Tam);
-        double Coste_Mejor_Vecino = Mejor_Coste;
-        int Iteraccion = 0;
-        boolean Mejora = true;
+        double Coste_Mejor_Vecino;
+        int Iteracion = 0;
         int Reducir = (int) (Iteraciones * Porcentaje_Interacciones);
         int Tam_Vecindario = (int) (Iteraciones * Entorno);
+        int Estanca = (int) (Iteraciones*Reduccion);
+        double Coste_Mejor_Momento_Anterior = Double.MAX_VALUE;
+        double Mejor_Coste_Global = Mejor_Coste;
+        int Empeoramientos = 0;
 
-        int numEmpeora = 0;
-        Random rand = new Random(); // Para generar números aleatorios
+        while (Iteracion < Iteraciones) {
 
-        long i = 0;
-        while (i < Iteraciones) {
-
-            Coste_Mejor_Vecino = 9999999999.0;
+            Coste_Mejor_Vecino = Double.MAX_VALUE;
 
             // Evaluar el vecindario
             for (int j = 0; j < Tam_Vecindario; j++) {
-                int Pos1, Pos2;
+                int Pos1 = Main.random.nextInt(Tam);
+                int Pos2;
                 do {
-                    Pos1 = rand.nextInt((int) Tam);
-                } while (Pos1 >= Tam);
-
-                do {
-                    Pos2 = rand.nextInt((int) Tam);
-                } while (Pos1 == Pos2 || Pos2 >= Tam);
+                    Pos2 = Main.random.nextInt(Tam);
+                } while (Pos1 == Pos2);
 
                 Array_Aux = new ArrayList<>(Mejor_Solucion);
-                // Calcular el posible coste en caso de hacer el movimiento
                 double Coste_Permutado = Factorizacion(Array_Aux, Mejor_Coste, Matriz_Distancias, Tam, Pos1, Pos2);
+
                 if (Coste_Permutado < Coste_Mejor_Vecino) {
                     Coste_Mejor_Vecino = Coste_Permutado;
                     swap(Array_Aux, Pos1, Pos2);
@@ -233,48 +230,52 @@ public class Algoritmos {
 
             // Comprobar si hay un vecino mejor que la solución actual
             if (Coste_Mejor_Vecino < Mejor_Coste) {
-                i++;
-                Mejor_Solucion = new ArrayList<>(Mejor_Vecino);
+                Iteracion++;
+                Mejor_Solucion.clear();
+                Mejor_Solucion.addAll(Mejor_Vecino);
                 Mejor_Coste = Coste_Mejor_Vecino;
 
-                if (costeMejorVecino < mejorCosteGlobal) {
-                    mejorCosteGlobal = mejorCoste;
-                    mejorGlobal = new ArrayList<>(s);
+                if (Coste_Mejor_Vecino < Mejor_Coste_Global) {
+                    Mejor_Coste_Global = Mejor_Coste;
+                    Mejor_Global = new ArrayList<>(Mejor_Solucion);
                 }
 
-                if (CosteMejorMomentoAnt > mejorCoste) {
-                    numEmpeora = 0;
-                    CosteMejorMomentoAnt = (long) mejorCoste;
+                if (Coste_Mejor_Momento_Anterior > Mejor_Coste) {
+                    Empeoramientos = 0;
+                    Coste_Mejor_Momento_Anterior = Mejor_Coste;
                 } else {
-                    numEmpeora++;
+                    Empeoramientos++;
                 }
 
             } else {
-                i++; // SIEMPRE ITERA
+                Iteracion++; // SIEMPRE ITERA
+                Empeoramientos++;
 
-                numEmpeora++;
-                if (numEmpeora == estancamiento) {
-                    numEmpeora = 0;
+                if (Empeoramientos == Estanca) {
+                    Empeoramientos = 0;
                     System.out.println(" Reinicia ");
-                    cargaGredyAleatorizado2(s, Tam, mat, kaleatorio);
-                    mejorCoste = Coste(s, mat, Tam);
-                    CosteMejorMomentoAnt = (long) mejorCoste;
+                    GreedyAleatorio(Mejor_Solucion, Tam, Matriz_Distancias);
+                    Mejor_Coste = Calculo_Coste(Mejor_Solucion, Matriz_Distancias, Tam);
+                    Coste_Mejor_Momento_Anterior = Mejor_Coste;
                 } else {
-                    s = new ArrayList<>(mejorVecino);
-                    mejorCoste = costeMejorVecino;
+                    Mejor_Solucion.clear();
+                    Mejor_Solucion.addAll(Mejor_Vecino);
+                    Mejor_Coste = Coste_Mejor_Vecino;
                 }
             }
 
             // Calcular el entorno y modificarlo mediante el descenso
-            if (i % Reducir == 0) {
+            if (Iteracion % Reducir == 0) {
                 Tam_Vecindario = (int) (Tam_Vecindario * (1 - Reduccion));
                 System.out.println(" Cambio vecindario " + Tam_Vecindario);
             }
         }
 
-        System.out.println("**Iteraciones: " + i + " TamVecindario: " + Tam_Vecindario);
+        System.out.println("**Iteraciones: " + Iteracion + " TamVecindario: " + Tam_Vecindario);
+        double costete = Calculo_Coste(Mejor_Global,Matriz_Distancias,Tam);
+
         Mejor_Solucion.clear();
-        Mejor_Solucion.addAll(mejorGlobal);
+        Mejor_Solucion.addAll(Mejor_Global);
     }
 
     static double Calculo_Coste(ArrayList<Integer> Solucion, final double[][] Matriz_Distancias, int Tam) {
