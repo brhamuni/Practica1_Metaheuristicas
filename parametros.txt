@@ -4,7 +4,7 @@ nSemillas: 5
 53919521 15391952 21539195 52153919 95215391
 numeroK: 5
 Iteraciones: 5000
-Porcentaje_Interacciones: 0.1
+Porcentaje_Interacciones: 0.10
 Entorno: 0.08
-Reduccion: 0.1
-
+Reduccion: 0.10
+Estancamiento: 0.05

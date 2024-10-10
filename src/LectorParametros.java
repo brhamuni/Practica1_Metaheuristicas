@@ -16,46 +16,11 @@ public class LectorParametros {
     private Float Entorno;
     private Float Reduccion;
 
-
-    public Integer getIteraciones() {
-        return Iteraciones;
+    public Float getEstancamiento() {
+        return Estancamiento;
     }
 
-    public Float getEntorno() {
-        return Entorno;
-    }
-
-    public Float getPorcentaje_Interacciones() {
-        return Porcentaje_Interacciones;
-    }
-
-    public Float getReduccion() {
-        return Reduccion;
-    }
-
-    public String getRuta() {
-        return ruta;
-    }
-
-    public Integer getnFicheros() {
-        return nFicheros;
-    }
-
-    public Integer getNumeroK() {
-        return numeroK;
-    }
-
-    public Integer getnSemillas() {
-        return nSemillas;
-    }
-
-    public String[] getRutas() {
-        return rutas;
-    }
-
-    public Integer[] getSemillas() {
-        return semillas;
-    }
+    private Float Estancamiento;
 
     public LectorParametros(String ruta) {
         this.ruta=ruta;
@@ -117,6 +82,10 @@ public class LectorParametros {
         split = Linea_Archivo.split(" ");
         this.Reduccion = Float.parseFloat(split[1]);
 
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Estancamiento = Float.parseFloat(split[1]);
+
     }
 
     /**
@@ -133,4 +102,14 @@ public class LectorParametros {
         }
         return Archivo_Linea;
     }
+
+    public Integer getIteraciones() { return Iteraciones; }
+    public Float getEntorno() { return Entorno; }
+    public Float getPorcentaje_Interacciones() { return Porcentaje_Interacciones; }
+    public Float getReduccion() { return Reduccion; }
+    public Integer getnFicheros() { return nFicheros; }
+    public Integer getNumeroK() { return numeroK; }
+    public Integer getnSemillas() { return nSemillas; }
+    public String[] getRutas() { return rutas; }
+    public Integer[] getSemillas() { return semillas; }
 }
