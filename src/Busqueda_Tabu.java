@@ -117,7 +117,7 @@ public class Busqueda_Tabu {
                 if (Estrategia <= Oscilacion * 100) {/*
                     Utils.menosVisitados(Memoria, Array_Aux, Tam);
                     Log.append("Se opta por Diversificar\n");*/
-                    Utils.masVisitados(Memoria, Array_Aux, Tam);
+                    Utils.menosVisitados(Memoria, Array_Aux, Tam);
                     Log.append("Se opta por Intensificar\n");
                 } else {
                     Utils.masVisitados(Memoria, Array_Aux, Tam);
@@ -173,6 +173,7 @@ public class Busqueda_Tabu {
         Pos_Ciudad2 = solucion_actual.get(0) - 1; // Convertir a índice de 0
         Memoria.get(Pos_Ciudad1).set(Pos_Ciudad2, Memoria.get(Pos_Ciudad1).get(Pos_Ciudad2) + 1);
         Memoria.get(Pos_Ciudad2).set(Pos_Ciudad1, Memoria.get(Pos_Ciudad2).get(Pos_Ciudad1) + 1);
+
 
         // ACTUALIZAR MEMORIA TABU
         // Siempre se deben insertar los pares ordenados en la lista Tabu
