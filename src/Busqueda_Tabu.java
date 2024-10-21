@@ -1,8 +1,12 @@
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import static java.util.Collections.swap;
 
 public class Busqueda_Tabu {
-    public static void Busqueda_Tabu(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, float Estancamiento ) {
+    public static void Busqueda_Tabu(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, float Estancamiento, FileWriter Archivo, StringBuilder Log) throws IOException {
 
         Mejor_Solucion.clear();
         Greedy_Aleatorio.GreedyAleatorio(Mejor_Solucion,Tam,Matriz_Distancias);
@@ -23,7 +27,8 @@ public class Busqueda_Tabu {
         Integer Pos1_Tabu, Pos2_Tabu;
 
         while (Iteracion < Iteraciones) {
-
+            Log.append("El mejor coste global es: "+ Mejor_Coste_Global+"\n");
+            Log.append("El coste del mejor momento anterior es: "+ Coste_Mejor_Momento_Anterior+"\n");
             Coste_Mejor_Vecino = Double.MAX_VALUE;
 
             // Evaluamos el vecindario
@@ -42,7 +47,9 @@ public class Busqueda_Tabu {
                     swap(Array_Aux, Pos1, Pos2);
                     Mejor_Vecino = new ArrayList<>(Array_Aux);
                 }
+
             }
+            Log.append("El nuevo coste del mejor vecino es: "+ Coste_Mejor_Vecino +"\n");
 
             // Comprobamos si hay un vecino mejor que la solución actual
             if (Coste_Mejor_Vecino < Mejor_Coste) {
@@ -87,12 +94,15 @@ public class Busqueda_Tabu {
                 //System.out.println(" Cambio vecindario " + Tam_Vecindario);
             }
             Iteracion++;
+            Log.append("\n");
+            Archivo.write(Log.toString());
+            Log.delete(0,Log.length());
         }
 
         //System.out.println("**Iteraciones: " + Iteracion + " TamVecindario: " + Tam_Vecindario);
 
         Mejor_Solucion.clear();
         Mejor_Solucion.addAll(Mejor_Global);
+        Log.append("La mejor solucion final es: "+ Mejor_Coste_Global+"\n");
     }
-
 }

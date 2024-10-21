@@ -14,6 +14,7 @@ public class Busqueda_Local {
         boolean Mejora = true;
         int Reducir = (int) (Iteraciones * Porcentaje_Interacciones);
         int Tam_Vecindario = (int) (Iteraciones * Entorno);
+
         // Comienzan las vueltas del bucle principal (no iteraciones)
         while (Iteraccion < Iteraciones && Mejora) {
             Coste_Mejor_Vecino = Double.MAX_VALUE;
@@ -51,11 +52,7 @@ public class Busqueda_Local {
                     //System.out.println("Iteraciones = "+Iteraccion+": Cambio de vecindario");
                 }
             }
-
         }
-
         System.out.println("Total de iteraciones: " + Iteraccion + " con un tamaño de vecindario final: " + Tam_Vecindario);
     }
-
-
 }
