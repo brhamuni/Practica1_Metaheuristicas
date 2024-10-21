@@ -1,91 +1,141 @@
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import static java.util.Collections.swap;
 
 public class Busqueda_Tabu {
-    public static void Busqueda_Tabu(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, float Estancamiento, FileWriter Archivo, StringBuilder Log) throws IOException {
+    public static void Busqueda_Tabu(ArrayList<Integer> solucion_actual, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, float Estancamiento, int Tenencia, float Oscilacion, FileWriter Archivo, StringBuilder Log) throws IOException {
 
-        Mejor_Solucion.clear();
-        Greedy_Aleatorio.GreedyAleatorio(Mejor_Solucion,Tam,Matriz_Distancias);
-        ArrayList<Integer> Array_Aux;
-        ArrayList<Integer> Mejor_Vecino = new ArrayList<>(Mejor_Solucion);
-        ArrayList<Integer> Mejor_Global = new ArrayList<>(Mejor_Solucion);
-        double Mejor_Coste = Utils.Calculo_Coste(Mejor_Solucion, Matriz_Distancias, Tam);
-        double Coste_Mejor_Vecino;
+        solucion_actual.clear();
+        Greedy_Aleatorio.GreedyAleatorio(solucion_actual,Tam,Matriz_Distancias,Archivo,Log);
+        ArrayList<Integer> Array_Aux = null;
+        ArrayList<Integer> mejor_momento_actual = new ArrayList<>(solucion_actual);
+        ArrayList<Integer> Mejor_Global = new ArrayList<>(solucion_actual);
+
+        double Coste_Actual = Utils.Calculo_Coste(solucion_actual, Matriz_Distancias, Tam);
+        double Coste_Mejor_Momento_Actual;
         int Iteracion = 0;
         int Reducir = (int) (Iteraciones * Porcentaje_Interacciones);
         int Tam_Vecindario = (int) (Iteraciones * Entorno);
         int Estanca = (int) (Iteraciones*Estancamiento);
         double Coste_Mejor_Momento_Anterior = Double.MAX_VALUE;
-        double Mejor_Coste_Global = Mejor_Coste;
+        double Mejor_Coste_Global = Coste_Actual;
         int Empeoramientos = 0;
 
         ArrayList<ArrayList<Integer>> Memoria = new ArrayList<>(Collections.nCopies(Tam, new ArrayList<>(Collections.nCopies(Tam,0))));
-        Integer Pos1_Tabu, Pos2_Tabu;
+        Integer Pos1_Tabu=-1, Pos2_Tabu=-1, Ciudad_Tabu1=-1, Ciudad_Tabu2=-1;
+        LinkedList<Utils.Pair_Tabu> Lista_Tabu = new LinkedList<>();
+        for (int i = 0; i < Tenencia; i++) {
+            Lista_Tabu.add(new Utils.Pair_Tabu(-1, -1, -1, -1));
+        }
 
         while (Iteracion < Iteraciones) {
             Log.append("El mejor coste global es: "+ Mejor_Coste_Global+"\n");
             Log.append("El coste del mejor momento anterior es: "+ Coste_Mejor_Momento_Anterior+"\n");
-            Coste_Mejor_Vecino = Double.MAX_VALUE;
+            Coste_Mejor_Momento_Actual = Double.MAX_VALUE;
 
             // Evaluamos el vecindario
-            for (int j = 0; j < Tam_Vecindario; j++) {
+            for (int i = 0; i < Tam_Vecindario; i++) {
                 int Pos1 = Main.random.nextInt(Tam);
                 int Pos2;
                 do {
                     Pos2 = Main.random.nextInt(Tam);
                 } while (Pos1 == Pos2);
 
-                Array_Aux = new ArrayList<>(Mejor_Solucion);
-                double Coste_Permutado = Utils.Factorizacion(Array_Aux, Mejor_Coste, Matriz_Distancias, Tam, Pos1, Pos2);
+                boolean Es_Tabu = false;
+                int Pos1p = Pos1, Pos2p = Pos2, C1c = solucion_actual.get(Pos1)-1, C2c = solucion_actual.get(Pos2)-1;
 
-                if (Coste_Permutado < Coste_Mejor_Vecino) {
-                    Coste_Mejor_Vecino = Coste_Permutado;
-                    swap(Array_Aux, Pos1, Pos2);
-                    Mejor_Vecino = new ArrayList<>(Array_Aux);
+                if (Pos1p > Pos2p) {
+                    int aux = Pos1p;
+                    Pos1p = Pos2p;
+                    Pos2p = aux;
+                }
+                if (C1c > C2c){
+                    int aux = C1c;
+                    C1c = C2c;
+                    C2c = aux;
+                }
+
+                for (int j=0; j<Lista_Tabu.size(); ++j){
+                    //comprueba si las ciudadades y/o las posiciones son tabu
+                    if (Utils.Pair_Tabu.iguales(new Utils.Pair_Tabu(C1c,C2c,Pos1p,Pos2p), Lista_Tabu.get(j))){
+                        Es_Tabu = true;   // esta en lista tabu
+                       //    System.out.println("Tabu");
+                        break;
+                    }
+                }
+
+                if (!Es_Tabu) {
+                    Array_Aux = new ArrayList<>(solucion_actual);
+                    double Coste_Permutado = Utils.Factorizacion(Array_Aux, Coste_Actual, Matriz_Distancias, Tam, Pos1, Pos2);
+
+                    if (Coste_Permutado < Coste_Mejor_Momento_Actual) {
+                        Coste_Mejor_Momento_Actual = Coste_Permutado;
+                        swap(Array_Aux, Pos1, Pos2);
+                        mejor_momento_actual = new ArrayList<>(Array_Aux);
+                        Pos1_Tabu=Pos1; Pos2_Tabu=Pos2; Ciudad_Tabu1 = Array_Aux.get(Pos1)-1; Ciudad_Tabu2 = Array_Aux.get(Pos2)-1;
+                    }
                 }
 
             }
-            Log.append("El nuevo coste del mejor vecino es: "+ Coste_Mejor_Vecino +"\n");
+
+            Log.append("El coste del mejor momento actual es: "+ Coste_Mejor_Momento_Actual +"\n");
 
             // Comprobamos si hay un vecino mejor que la solución actual
-            if (Coste_Mejor_Vecino < Mejor_Coste) {
+            if (Coste_Mejor_Momento_Actual < Coste_Actual) {
 
-                Mejor_Solucion.clear();
-                Mejor_Solucion.addAll(Mejor_Vecino);
-                Mejor_Coste = Coste_Mejor_Vecino;
+                solucion_actual.clear();
+                solucion_actual.addAll(mejor_momento_actual);
+                Coste_Actual = Coste_Mejor_Momento_Actual;
 
-                if (Coste_Mejor_Vecino < Mejor_Coste_Global) {
-                    Mejor_Coste_Global = Mejor_Coste;
-                    Mejor_Global = new ArrayList<>(Mejor_Solucion);
+                if (Coste_Mejor_Momento_Actual < Mejor_Coste_Global) {
+                    Mejor_Coste_Global = Coste_Mejor_Momento_Actual;
+                    Mejor_Global = new ArrayList<>(solucion_actual);
                 }
 
-                if (Mejor_Coste < Coste_Mejor_Momento_Anterior) {
+                if (Coste_Mejor_Momento_Actual < Coste_Mejor_Momento_Anterior) {
                     //Mejora el mejor coste anterior por tanto empeoramientos = 0
                     Empeoramientos = 0;
-                    Coste_Mejor_Momento_Anterior = Mejor_Coste;
+                    Coste_Mejor_Momento_Anterior = Coste_Mejor_Momento_Actual;
                 } else {
                     Empeoramientos++;
                 }
 
             } else {
-
                 Empeoramientos++;
+                solucion_actual.clear();
+                solucion_actual.addAll(mejor_momento_actual);
+            }
 
-                if (Empeoramientos == Estanca) {
-                    Empeoramientos = 0;
-                    System.out.println("Estancamiento");
-                    Greedy_Aleatorio.GreedyAleatorio(Mejor_Solucion, Tam, Matriz_Distancias);
-                    Mejor_Coste = Utils.Calculo_Coste(Mejor_Solucion, Matriz_Distancias, Tam);
-                    Coste_Mejor_Momento_Anterior = Mejor_Coste;
+            Actualizar_Memorias(Memoria,Tam,solucion_actual,Lista_Tabu,Pos1_Tabu,Pos2_Tabu,Ciudad_Tabu1,Ciudad_Tabu2);
+
+            if (Empeoramientos == Estanca) {
+                Empeoramientos = 0;
+                System.out.println("Estancamiento");
+                int Cambio = Main.random.nextInt(0,101);
+                if (Cambio <= Oscilacion * 100) {
+                    Utils.menosVisitados(Memoria, Array_Aux, Tam);
+                    Log.append("Diversifica\n");
+
                 } else {
-                    Mejor_Solucion.clear();
-                    Mejor_Solucion.addAll(Mejor_Vecino);
-                    Mejor_Coste = Coste_Mejor_Vecino;
+                    Utils.masVisitados(Memoria, Array_Aux, Tam);
+                    Log.append("Intensifica\n");
                 }
+
+                solucion_actual.clear();
+                solucion_actual.addAll(Array_Aux);
+                Coste_Actual = Utils.Calculo_Coste(solucion_actual, Matriz_Distancias, Tam);
+                Coste_Mejor_Momento_Anterior = Coste_Actual;
+
+                if (Coste_Actual < Mejor_Coste_Global){
+                    Mejor_Coste_Global = Coste_Actual;
+                    Mejor_Global = new ArrayList<>(solucion_actual);
+                }
+                Lista_Tabu.clear();
+                for (int i = 0; i < Tenencia; i++) {
+                    Lista_Tabu.add(new Utils.Pair_Tabu(-1, -1, -1, -1));
+                }
+
             }
 
             // Calculamos el nuevo entorno si es necesario
@@ -101,8 +151,52 @@ public class Busqueda_Tabu {
 
         //System.out.println("**Iteraciones: " + Iteracion + " TamVecindario: " + Tam_Vecindario);
 
-        Mejor_Solucion.clear();
-        Mejor_Solucion.addAll(Mejor_Global);
+        solucion_actual.clear();
+        solucion_actual.addAll(Mejor_Global);
         Log.append("La mejor solucion final es: "+ Mejor_Coste_Global+"\n");
     }
+
+
+    static void Actualizar_Memorias(ArrayList<ArrayList<Integer>> Memoria, int Tam, ArrayList<Integer> solucion_actual, LinkedList<Utils.Pair_Tabu> Lista_Tabu, int Pos1_Tabu, int Pos2_Tabu, int Ciudad_Tabu1, int Ciudad_Tabu2) {
+        int c1, c2;
+
+        // Actualizar la memoria de visitas
+        for (int k = 0; k < Tam - 1; k++) {
+            c1 = solucion_actual.get(k) - 1;   // Convertir a índice de 0
+            c2 = solucion_actual.get(k + 1) - 1;
+
+            // Actualizamos la memoria con los pares de ciudades visitadas
+            Memoria.get(c1).set(c2, Memoria.get(c1).get(c2) + 1);
+            Memoria.get(c2).set(c1, Memoria.get(c2).get(c1) + 1);
+        }
+
+        // Último arco, conectando el último con el primero (ciclo cerrado)
+        c1 = solucion_actual.get(Tam - 1) - 1;
+        c2 = solucion_actual.get(0) - 1;
+        Memoria.get(c1).set(c2, Memoria.get(c1).get(c2) + 1);
+        Memoria.get(c2).set(c1, Memoria.get(c2).get(c1) + 1);
+
+        // ACTUALIZAR MEMORIA TABU
+        // Siempre se deben insertar los pares ordenados en la lista Tabu
+        if (Pos1_Tabu > Pos2_Tabu) {
+            int aux = Pos1_Tabu;
+            Pos1_Tabu = Pos2_Tabu;
+            Pos2_Tabu = aux;
+        }
+        if (Ciudad_Tabu1 > Ciudad_Tabu2) {
+            int aux = Ciudad_Tabu1;
+            Ciudad_Tabu1 = Ciudad_Tabu2;
+            Ciudad_Tabu2 = aux;
+        }
+
+        // Insertar en la lista Tabu
+        Lista_Tabu.push(new Utils.Pair_Tabu(Ciudad_Tabu1, Ciudad_Tabu2, Pos1_Tabu, Pos2_Tabu));
+
+        // Sacar el primer elemento de la lista Tabu si es necesario (en caso de que haya un límite en el tamaño)
+        // Este comportamiento puede depender de la implementación, así que ajusta esta parte si es necesario
+        if (!Lista_Tabu.isEmpty()) {
+            Lista_Tabu.pop(); // Eliminar el más antiguo si se excede el tamaño de la lista
+        }
+    }
+
 }

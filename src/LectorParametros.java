@@ -15,6 +15,24 @@ public class LectorParametros {
     private Float Porcentaje_Interacciones;
     private Float Entorno;
     private Float Reduccion;
+    private Integer Tenencia;
+    private Float Oscilacion;
+
+    public Integer getTenencia() {
+        return Tenencia;
+    }
+
+    public void setTenencia(Integer tenencia) {
+        Tenencia = tenencia;
+    }
+
+    public Float getOscilacion() {
+        return Oscilacion;
+    }
+
+    public void setOscilacion(Float oscilacion) {
+        Oscilacion = oscilacion;
+    }
 
     public Float getEstancamiento() {
         return Estancamiento;
@@ -85,6 +103,14 @@ public class LectorParametros {
         Linea_Archivo = Avanzar_Linea(Archivo);
         split = Linea_Archivo.split(" ");
         this.Estancamiento = Float.parseFloat(split[1]);
+
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Tenencia = Integer.parseInt(split[1]);
+
+        Linea_Archivo = Avanzar_Linea(Archivo);
+        split = Linea_Archivo.split(" ");
+        this.Oscilacion = Float.parseFloat(split[1]);
 
     }
 

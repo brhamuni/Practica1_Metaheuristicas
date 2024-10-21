@@ -8,3 +8,5 @@ Porcentaje_Interacciones: 0.10
 Entorno: 0.08
 Reduccion: 0.10
 Estancamiento: 0.05
+Tenencia_Tabu: 10
+Oscilacion: 0.5

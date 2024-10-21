@@ -1,8 +1,9 @@
-import java.util.ArrayList;
-import java.util.Collections;
-
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class Greedy_Aleatorio {
+
     /**
      * Método que genera una solución al problema utilizando un enfoque Greedy Aleatorio.
      * @param Solucion Lista de enteros donde se almacenará la solución generada.
@@ -10,12 +11,11 @@ public class Greedy_Aleatorio {
      * @param Matriz_Distancias Una matriz que representa la distancia entre la ciudad i y la ciudad j.
      * @return El coste total de la solución generada utilizando el algoritmo Greedy Aleatorio.
      */
-    static double GreedyAleatorio(ArrayList<Integer> Solucion, int Tam, final double[][] Matriz_Distancias) {
+    static double GreedyAleatorio(ArrayList< Integer > Solucion, int Tam, final double[][] Matriz_Distancias, FileWriter Archivo, StringBuilder Log) throws IOException {
         Solucion.clear();
         ArrayList<Utils.Pair> Posibles_Ciudades = new ArrayList<>();
-        ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>();
+        ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>(Collections.nCopies(Tam,false));
 
-        for (int i = 0; i < Tam; ++i) { Ciudades_Visitadas.add(false); }
         for (int i = 0; i < Tam; ++i) {
             double Suma_Total = 0.0;
             for (int j = 0; j < Tam; ++j) {
@@ -41,5 +41,4 @@ public class Greedy_Aleatorio {
         }
         return Utils.Calculo_Coste(Solucion, Matriz_Distancias, Tam);
     }
-
 }

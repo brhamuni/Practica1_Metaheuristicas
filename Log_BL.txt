@@ -1,0 +1,5 @@
+Archivo: a280.tsp, semilla: 53919521
+Archivo: a280.tsp, semilla: 15391952
+Archivo: a280.tsp, semilla: 21539195
+Archivo: a280.tsp, semilla: 52153919
+Archivo: a280.tsp, semilla: 95215391

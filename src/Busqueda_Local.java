@@ -1,11 +1,12 @@
-import java.util.ArrayList;
-
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 import static java.util.Collections.swap;
 
 public class Busqueda_Local {
-    public static void Busqueda_Local(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion ) {
+    public static void Busqueda_Local(ArrayList<Integer> Mejor_Solucion, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, FileWriter Archivo, StringBuilder Log ) throws IOException {
         Mejor_Solucion.clear();
-        Greedy_Aleatorio.GreedyAleatorio(Mejor_Solucion,Tam,Matriz_Distancias);
+        Greedy_Aleatorio.GreedyAleatorio(Mejor_Solucion,Tam,Matriz_Distancias, Archivo, Log);
         ArrayList<Integer> Array_Aux;
         ArrayList<Integer> Mejor_Vecino = new ArrayList<>(Mejor_Solucion);
         double Mejor_Coste = Utils.Calculo_Coste(Mejor_Solucion, Matriz_Distancias, Tam);

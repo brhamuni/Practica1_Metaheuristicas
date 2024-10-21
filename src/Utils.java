@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
 
 public class Utils {
 
@@ -17,6 +19,7 @@ public class Utils {
         //Sumamos el coste de ir de la ultima a la primera ciudad para cerrar el ciclo
         return Distancia_Total + Matriz_Distancias[Solucion.getFirst() - 1][Solucion.get(Tam - 1) - 1];
     }
+
 
     /**
      * Método que calcula el coste despues de aplicar 2-opt para la Busqueda Local.
@@ -103,24 +106,105 @@ public class Utils {
         return Nuevo_Coste;
     }
 
+    /**
+     * Clase que representa un par de valores: un número entero (ciudad) y un valor (suma).
+     */
     static class Pair implements Comparable<Pair> {
         private final Integer ciudad;
         private final Double suma;
 
+        //Constructor parametrizado de la clase Pair.
         Pair( Integer ciudad, Double suma ){
             this.suma = suma;
             this.ciudad = ciudad;
         }
 
+        /**
+         * Compara esta instancia de Pair con otra instancia, basándose en el valor de la propiedad `suma`.
+         * @param p el objeto Pair con el cual se va a comparar.
+         * @return -1 si el valor de es menor o igual, y devuelve 1 si el valor es mayor.
+         */
         @Override
         public int compareTo( Pair p ){
             if( this.suma - p.suma <= 0){ return -1; }
             return 1;
         }
-
         public Integer getCiudad() { return ciudad; }
-        public Double getSuma() { return suma; }
+    }
 
+    /**
+     * Clase que representa un par de objetos con cuatro valores enteros (c1, c2, p1, p2).
+     */
+    static class Pair_Tabu {
+        int Ciudad_1 = 0, Ciudad_2 = 0, Pos_1 = 0, Pos_2 = 0;
+        //Constructor parametrizado de la clase Pair_Tabu.
+        public Pair_Tabu(int Ciudad_1, int Ciudad_2, int Pos_1, int Pos_2) {
+            this.Ciudad_1 = Ciudad_1;
+            this.Ciudad_2 = Ciudad_2;
+            this.Pos_1 = Pos_1;
+            this.Pos_2 = Pos_2;
+        }
+
+        public static boolean iguales(Pair_Tabu orig1, Pair_Tabu orig2) {
+            if (orig1.Ciudad_1 == orig2.Ciudad_1 && orig1.Ciudad_2 == orig2.Ciudad_2 && orig1.Pos_1 == orig2.Pos_1 && orig1.Pos_2 == orig2.Pos_2) {
+                return true;
+            }
+            return false;
+        }
 
     }
+
+    public static void masVisitados(ArrayList<ArrayList<Integer>> mat, ArrayList<Integer> nuevaSol, int tam) {
+        nuevaSol.clear();
+        for (int i = 0; i < tam; i++) {
+            nuevaSol.add(0);  // Inicializa la solución con ceros
+        }
+
+        boolean[] marcaf = new boolean[tam];  // Array para marcar las ciudades ya visitadas
+        Random random = new Random();  // Usa una instancia de Random
+        int c = random.nextInt(tam);  // Selecciona una ciudad inicial aleatoria
+        nuevaSol.set(0, c);  // Asigna la primera ciudad a la solución
+        marcaf[c] = true;  // Marca esa ciudad como visitada
+
+        for (int k = 1; k < tam; k++) {
+            int menor = Integer.MAX_VALUE;  // Inicializa menor con el valor máximo de int
+            for (int i = 0; i < tam; i++) {
+                // Verifica si la ciudad no ha sido visitada y si tiene un valor mayor que "menor"
+                if (!marcaf[i] && mat.get(nuevaSol.get(k - 1)).get(i) < menor) {
+                    menor = mat.get(nuevaSol.get(k - 1)).get(i);  // Actualiza el menor valor
+                    c = i;  // Actualiza la ciudad a visitar
+                }
+            }
+            nuevaSol.set(k, c);  // Asigna la ciudad con el menor valor a la solución
+            marcaf[c] = true;  // Marca la ciudad como visitada
+        }
+    }
+
+    // Método menosVisitados
+    public static void menosVisitados(ArrayList<ArrayList<Integer>> mat, ArrayList<Integer> nuevaSol, int tam) {
+        nuevaSol.clear();
+        for (int i = 0; i < tam; i++) {
+            nuevaSol.add(0);  // Inicializa la solución con ceros
+        }
+
+        boolean[] marcaf = new boolean[tam];  // Array para marcar las ciudades ya visitadas
+        Random random = new Random();  // Usa una instancia de Random
+        int c = random.nextInt(tam);  // Selecciona una ciudad inicial aleatoria
+        nuevaSol.set(0, c);  // Asigna la primera ciudad a la solución
+        marcaf[c] = true;  // Marca esa ciudad como visitada
+
+        for (int k = 1; k < tam; k++) {
+            int mayor = Integer.MAX_VALUE;  // Inicializa mayor con el valor máximo de int
+            for (int i = 0; i < tam; i++) {
+                // Verifica si la ciudad no ha sido visitada y si tiene un valor menor que "mayor"
+                if (!marcaf[i] && mat.get(nuevaSol.get(k - 1)).get(i) < mayor) {
+                    mayor = mat.get(nuevaSol.get(k - 1)).get(i);  // Actualiza el mayor valor
+                    c = i;  // Actualiza la ciudad a visitar
+                }
+            }
+            nuevaSol.set(k, c);  // Asigna la ciudad con el menor valor a la solución
+            marcaf[c] = true;  // Marca la ciudad como visitada
+        }
+    }
+
 }

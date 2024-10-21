@@ -39,9 +39,11 @@ public class Main{
                 random = new Random(lectorParametros.getSemillas()[j]);
                 double Tiempo_Incial = System.nanoTime();
                 Log_Tabu.append("Archivo: "+lectorParametros.getRutas()[i]+", semilla: "+lectorParametros.getSemillas()[j]+"\n");
-                //Algoritmos.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias());
-                Busqueda_Tabu.Busqueda_Tabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), lectorParametros.getEstancamiento(), Archivo_Tabu, Log_Tabu);
-                //Algoritmos.Busqueda_Local(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion());
+                Log_BL.append("Archivo: "+lectorParametros.getRutas()[i]+", semilla: "+lectorParametros.getSemillas()[j]+"\n");
+
+            //   Greedy_Aleatorio.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), Archivo_Greddy, Log_Greddy);
+               Busqueda_Tabu.Busqueda_Tabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), lectorParametros.getEstancamiento(), lectorParametros.getTenencia(), lectorParametros.getOscilacion(), Archivo_Tabu, Log_Tabu);
+            //    Busqueda_Local.Busqueda_Local(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), Archivo_BL, Log_BL);
 
                 coste = Utils.Calculo_Coste(Solucion, lector.getMatriz_Distancias(), lector.getMatriz_Distancias().length);
                 System.out.println("Procesando archivo: "+ lectorParametros.getRutas()[i]+", ejecucion numero: " + (j+1) +", semilla: "+lectorParametros.getSemillas()[j]);
