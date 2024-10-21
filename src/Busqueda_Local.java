@@ -50,7 +50,6 @@ public class Busqueda_Local {
                 // Calcular el entorno
                 if (Iteraccion % Reducir == 0) {
                     Tam_Vecindario = (int) (Tam_Vecindario * (1 - Reduccion));
-                    //System.out.println("Iteraciones = "+Iteraccion+": Cambio de vecindario");
                 }
             }
         }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
 
@@ -154,57 +155,63 @@ public class Utils {
 
     }
 
-    public static void masVisitados(ArrayList<ArrayList<Integer>> mat, ArrayList<Integer> nuevaSol, int tam) {
-        nuevaSol.clear();
-        for (int i = 0; i < tam; i++) {
-            nuevaSol.add(0);  // Inicializa la solución con ceros
-        }
+    public static void masVisitados(ArrayList<ArrayList<Integer>> Matriz_Distancias, ArrayList<Integer> Array_Aux, int Tam) {
+        Array_Aux.clear();
+        ArrayList<Boolean> Visitadas = new ArrayList<>(Collections.nCopies(Tam, false));  // Array para marcar las ciudades ya visitadas
 
-        boolean[] marcaf = new boolean[tam];  // Array para marcar las ciudades ya visitadas
-        Random random = new Random();  // Usa una instancia de Random
-        int c = random.nextInt(tam);  // Selecciona una ciudad inicial aleatoria
-        nuevaSol.set(0, c);  // Asigna la primera ciudad a la solución
-        marcaf[c] = true;  // Marca esa ciudad como visitada
+        // Selecciona una ciudad inicial aleatoria
+        int Ciudad = new Random().nextInt(Tam) + 1;  // Random devuelve de 0 a Tam-1, por lo que sumamos 1
+        Array_Aux.add(Ciudad);  // Asigna la primera ciudad a la solución
+        Visitadas.set(Ciudad - 1, true);  // Marca esa ciudad como visitada
 
-        for (int k = 1; k < tam; k++) {
-            int menor = Integer.MAX_VALUE;  // Inicializa menor con el valor máximo de int
-            for (int i = 0; i < tam; i++) {
-                // Verifica si la ciudad no ha sido visitada y si tiene un valor mayor que "menor"
-                if (!marcaf[i] && mat.get(nuevaSol.get(k - 1)).get(i) < menor) {
-                    menor = mat.get(nuevaSol.get(k - 1)).get(i);  // Actualiza el menor valor
-                    c = i;  // Actualiza la ciudad a visitar
+        for (int i = 1; i < Tam; i++) {
+            float Menor = Float.MAX_VALUE;  // Inicializa "Menor" con el máximo valor posible
+            int CiudadSeleccionada = -1;  // Variable para la ciudad seleccionada en esta iteración
+
+            for (int j = 0; j < Tam; j++) {
+                // Verifica si la ciudad no ha sido visitada y si su distancia es menor que "Menor"
+                if (!Visitadas.get(j) && Matriz_Distancias.get(Array_Aux.get(i - 1) - 1).get(j) < Menor) {
+                    Menor = Matriz_Distancias.get(Array_Aux.get(i - 1) - 1).get(j);  // Actualiza el menor valor
+                    CiudadSeleccionada = j + 1;  // Actualiza la ciudad a visitar (j + 1 porque las ciudades son 1 más que el índice)
                 }
             }
-            nuevaSol.set(k, c);  // Asigna la ciudad con el menor valor a la solución
-            marcaf[c] = true;  // Marca la ciudad como visitada
+
+            if (CiudadSeleccionada != -1) {
+                Array_Aux.add(CiudadSeleccionada);  // Asigna la ciudad seleccionada a la solución
+                Visitadas.set(CiudadSeleccionada - 1, true);  // Marca la ciudad como visitada
+            }
         }
     }
 
     // Método menosVisitados
-    public static void menosVisitados(ArrayList<ArrayList<Integer>> mat, ArrayList<Integer> nuevaSol, int tam) {
-        nuevaSol.clear();
-        for (int i = 0; i < tam; i++) {
-            nuevaSol.add(0);  // Inicializa la solución con ceros
-        }
+    public static void menosVisitados(ArrayList<ArrayList<Integer>> Matriz_Distancias, ArrayList<Integer> Array_Aux, int Tam) {
+        Array_Aux.clear();
+        ArrayList<Boolean> Visitadas = new ArrayList<>(Collections.nCopies(Tam, false));  // Array para marcar las ciudades ya visitadas
 
-        boolean[] marcaf = new boolean[tam];  // Array para marcar las ciudades ya visitadas
-        Random random = new Random();  // Usa una instancia de Random
-        int c = random.nextInt(tam);  // Selecciona una ciudad inicial aleatoria
-        nuevaSol.set(0, c);  // Asigna la primera ciudad a la solución
-        marcaf[c] = true;  // Marca esa ciudad como visitada
+        // Selecciona una ciudad inicial aleatoria
+        int Ciudad = new Random().nextInt(Tam) + 1;  // Random devuelve de 0 a Tam-1, por lo que sumamos 1
+        Array_Aux.add(Ciudad);  // Asigna la primera ciudad a la solución
+        Visitadas.set(Ciudad - 1, true);  // Marca esa ciudad como visitada
 
-        for (int k = 1; k < tam; k++) {
-            int mayor = Integer.MAX_VALUE;  // Inicializa mayor con el valor máximo de int
-            for (int i = 0; i < tam; i++) {
-                // Verifica si la ciudad no ha sido visitada y si tiene un valor menor que "mayor"
-                if (!marcaf[i] && mat.get(nuevaSol.get(k - 1)).get(i) < mayor) {
-                    mayor = mat.get(nuevaSol.get(k - 1)).get(i);  // Actualiza el mayor valor
-                    c = i;  // Actualiza la ciudad a visitar
+        for (int i = 1; i < Tam; i++) {
+            float Mayor = -1;  // Inicializa "Mayor" con un valor bajo
+            int CiudadSeleccionada = -1;  // Variable para la ciudad seleccionada en esta iteración
+
+            for (int j = 0; j < Tam; j++) {
+                // Verifica si la ciudad no ha sido visitada y si su distancia es mayor que "Mayor"
+                if (!Visitadas.get(j) && Matriz_Distancias.get(Array_Aux.get(i - 1) - 1).get(j) > Mayor) {
+                    Mayor = Matriz_Distancias.get(Array_Aux.get(i - 1) - 1).get(j);  // Actualiza el mayor valor
+                    CiudadSeleccionada = j + 1;  // Actualiza la ciudad a visitar (j + 1 porque las ciudades son 1 más que el índice)
                 }
             }
-            nuevaSol.set(k, c);  // Asigna la ciudad con el menor valor a la solución
-            marcaf[c] = true;  // Marca la ciudad como visitada
+
+            if (CiudadSeleccionada != -1) {
+                Array_Aux.add(CiudadSeleccionada);  // Asigna la ciudad seleccionada a la solución
+                Visitadas.set(CiudadSeleccionada - 1, true);  // Marca la ciudad como visitada
+            }
         }
     }
+
+
 
 }
