@@ -1,10 +1,7 @@
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Logger;
 
 
 public class Main{
@@ -42,7 +39,8 @@ public class Main{
                 Log_BL.append("Archivo: "+lectorParametros.getRutas()[i]+", semilla: "+lectorParametros.getSemillas()[j]+"\n");
 
             //   Greedy_Aleatorio.GreedyAleatorio(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), Archivo_Greddy, Log_Greddy);
-               Busqueda_Tabu.Busqueda_Tabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), lectorParametros.getEstancamiento(), lectorParametros.getTenencia(), lectorParametros.getOscilacion(), Archivo_Tabu, Log_Tabu);
+               //Busqueda_Tabu.Busqueda_Tabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), lectorParametros.getEstancamiento(), lectorParametros.getTenencia(), lectorParametros.getOscilacion(), Archivo_Tabu, Log_Tabu);
+               David.BTabu.BTabu(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Iteracciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), lectorParametros.getEstancamiento(), lectorParametros.getOscilacion(), lectorParametros.getTenencia());
             //    Busqueda_Local.Busqueda_Local(Solucion, lector.getMatriz_Distancias().length, lector.getMatriz_Distancias(), lectorParametros.getIteraciones(), lectorParametros.getPorcentaje_Interacciones(), lectorParametros.getEntorno(), lectorParametros.getReduccion(), Archivo_BL, Log_BL);
 
                 coste = Utils.Calculo_Coste(Solucion, lector.getMatriz_Distancias(), lector.getMatriz_Distancias().length);

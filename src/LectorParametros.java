@@ -131,7 +131,7 @@ public class LectorParametros {
 
     public Integer getIteraciones() { return Iteraciones; }
     public Float getEntorno() { return Entorno; }
-    public Float getPorcentaje_Interacciones() { return Porcentaje_Interacciones; }
+    public Float getPorcentaje_Iteracciones() { return Porcentaje_Interacciones; }
     public Float getReduccion() { return Reduccion; }
     public Integer getnFicheros() { return nFicheros; }
     public Integer getNumeroK() { return numeroK; }

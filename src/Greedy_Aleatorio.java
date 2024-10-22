@@ -11,7 +11,7 @@ public class Greedy_Aleatorio {
      * @param Matriz_Distancias Una matriz que representa la distancia entre la ciudad i y la ciudad j.
      * @return El coste total de la solución generada utilizando el algoritmo Greedy Aleatorio.
      */
-    static double GreedyAleatorio(ArrayList< Integer > Solucion, int Tam, final double[][] Matriz_Distancias, FileWriter Archivo, StringBuilder Log) throws IOException {
+    static double GreedyAleatorio(ArrayList< Integer > Solucion, int Tam, final double[][] Matriz_Distancias) throws IOException {
         Solucion.clear();
         ArrayList<Utils.Pair> Posibles_Ciudades = new ArrayList<>();
         ArrayList<Boolean> Ciudades_Visitadas = new ArrayList<>(Collections.nCopies(Tam,false));
