@@ -8,8 +8,8 @@ public class Busqueda_Tabu {
     public static void Busqueda_Tabu(ArrayList<Integer> solucion_actual, int Tam, final double[][] Matriz_Distancias, long Iteraciones, float Porcentaje_Interacciones, float Entorno, float Reduccion, float Estancamiento, int Tenencia, float Oscilacion, FileWriter Archivo, StringBuilder Log) throws IOException {
 
         solucion_actual.clear();
-        Greedy_Aleatorio.GreedyAleatorio( solucion_actual, Tam, Matriz_Distancias);
-        ArrayList<Integer> Array_Aux = null;
+        Greedy_Aleatorio.GreedyAleatorio(solucion_actual, Tam, Matriz_Distancias, Archivo, Log);
+        ArrayList<Integer> Array_Aux;
         ArrayList<Integer> mejor_momento_actual = new ArrayList<>( solucion_actual );
         ArrayList<Integer> Mejor_Global = new ArrayList<>( solucion_actual );
 
@@ -117,15 +117,17 @@ public class Busqueda_Tabu {
 
             if (Empeoramientos == Estanca) {
                 Empeoramientos = 0;
-                Log.append("Estancamiento, se reinicia la busqueda\n");
-                System.out.println("Estancamiento");
+                Log.append("Estancamiento, se reinicia la busqueda en otro punto\n");
+                //System.out.println("Estancamiento");
                 int Num_Aleatorio = Main.random.nextInt(101);
                 if (Num_Aleatorio <= Oscilacion*100){
                     //System.out.println("Diversifica");
+                    Log.append("Se opta por Diversificar\n");
                     Array_Aux = new ArrayList<>(Tam);
                     Utils.menosVisitados(Memoria, Array_Aux, Tam);
                 }else{
                     //System.out.println("Intensifica");
+                    Log.append("Se opta por Intensificar\n");
                     Array_Aux = new ArrayList<>(Tam);
                     Utils.masVisitados(Memoria, Array_Aux, Tam);
                 }

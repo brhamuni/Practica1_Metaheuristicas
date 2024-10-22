@@ -159,7 +159,7 @@ public class Utils {
         ArrayList<Boolean> Visitadas = new ArrayList<>(Collections.nCopies(Tam, false));  // Array para marcar las ciudades ya visitadas
 
         // Selecciona una ciudad inicial aleatoria
-        int Ciudad = Main.random.nextInt(1,Tam+1);
+        int Ciudad = new Random().nextInt(1,Tam+1);
         Array_Aux.add(Ciudad);  // Asigna la primera ciudad a la solución
         Visitadas.set(Ciudad - 1, true);  // Marca esa ciudad como visitada
 
@@ -185,7 +185,7 @@ public class Utils {
         ArrayList<Boolean> Visitadas = new ArrayList<>(Collections.nCopies(Tam, false));  // Array para marcar las ciudades ya visitadas
 
         // Selecciona una ciudad inicial aleatoria
-        int Ciudad = Main.random.nextInt(1,Tam+1);
+        int Ciudad = new Random().nextInt(1,Tam+1);
         Array_Aux.add(Ciudad);  // Asigna la primera ciudad a la solución
         Visitadas.set(Ciudad - 1, true);  // Marca esa ciudad como visitada
 
